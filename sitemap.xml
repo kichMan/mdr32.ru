@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://mdr32.ru/index.html</loc>
+    <image:image>
+      <image:loc>https://mdr32.ru/src/img/pinout.png</image:loc>
+      <image:title>Pinout K1986BE92QI</image:title>
+      <image:caption>Описание функций пинов (Pinout) российского микроконтроллера K1986BE92QI</image:caption>
+    </image:image>
+  </url> 
+</urlset>
