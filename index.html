@@ -2,21 +2,152 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <link rel="icon" href="https://mdr32.ru/favicon.svg" type="image/svg+xml">
     <title>MDR32 - микроконтроллеры российского производства</title>
     <link href="./normalize.css" rel="stylesheet" media="all">
-    <style>
-        html {
-            height: 100%;
-            width: 100%;
-        }
-        body {
-            position: relative;
-            height: 100%;
-            width: 100%;
-            background: #ff4001 center center url("./coming_soon.png") no-repeat;
-            background-size: calc(min(500px, 100%));
-        }
-    </style>
+    <link href="./styles.css" rel="stylesheet" media="all">
 </head>
-<body>&nbsp;</body>
+<body>
+    <div id="container">
+        <header>
+            <figure class="pinout_big" itemscope itemtype="http://schema.org/ImageObject">
+                <figcaption itemprop="description">Описание функций пинов (Pinout) российского микроконтроллера K1986BE92QI</figcaption>
+                <meta itemprop="author" content="www.mdr32.ru">
+                <meta itemprop="name" content="Pinout K1986BE92QI">
+                <a href="./src/img/pinout.png" title=""><img src="./src/img/pinout.png" alt="Pinout K1986BE92QI" width="600" itemprop="contentUrl"></a>
+            </figure>
+        </header>
+        <main>
+            <h1>Микроконтроллер <strong>K1986BE92QI</strong></h1>
+            <section>
+                <h2>Описание и параметры</h2>
+                <p><strong>Серия 32-разрядных микроконтроллеров построенных на ядре ARM Cortex-M3, содержащих 128 КБ памяти программ Flash-типа и 32 КБ ОЗУ.</strong></p>
+                <p>Микроконтроллеры работают на тактовой частоте до 80 МГц.</p>
+                <p>Периферия микроконтроллера включает контроллер USB интерфейса, интерфейсы UART, SPI и I2C, контроллер внешней системной шины, что позволяет работать с внешними микросхемами статического ОЗУ и ПЗУ, NAND Flash-памятью и другими внешними устройствами. </p>
+                <p>Микроконтроллеры содержат различные таймеры, блоки АЦП и ЦАП, компаратор с тремя входами и внутренней шкалой напряжений.</p>
+                <p>Архитектура системы памяти за счет матрицы системных шин позволяет минимизировать возможные конфликты при работе системы и повысить общую производительность.</p>
+                <p>Контроллер DMA позволяет ускорить обмен информацией между ОЗУ и периферией без участия процессорного ядра.</p>
+            </section>
+
+            <section>
+                <h2>Характеристики</h2>
+                <table class="feature_table">
+                    <tbody>
+                        <tr>
+                            <td><span>CAN</span></td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td><span>fc [МГц]</span></td>
+                            <td>80</td>
+                        </tr>
+                        <tr>
+                            <td><span>I2C</span></td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td><span>SPI</span></td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td><span>tmax [С]</span></td>
+                            <td>85</td>
+                        </tr>
+                        <tr>
+                            <td><span>tmin [С]</span></td>
+                            <td>-40</td>
+                        </tr>
+                        <tr>
+                            <td><span>UART</span></td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td><span>Ucc_max [В]</span></td>
+                            <td>3.6</td>
+                        </tr>
+                        <tr>
+                            <td><span>Ucc_min [В]</span></td>
+                            <td>2.2</td>
+                        </tr>
+                        <tr>
+                            <td><span>USB</span></td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td><span>USER IO</span></td>
+                            <td>43</td>
+                        </tr>
+                        <tr>
+                            <td><span>АЦП [каналов]</span></td>
+                            <td>8</td>
+                        </tr>
+                        <tr>
+                            <td><span>АЦП [разрядов]</span></td>
+                            <td>12</td>
+                        </tr>
+                        <tr>
+                            <td><span>Внешняя шина</span></td>
+                            <td>8</td>
+                        </tr>
+                        <tr>
+                            <td><span>Выводов</span></td>
+                            <td>64</td>
+                        </tr>
+                        <tr>
+                            <td><span>Компаратор</span></td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td><span>Компаратор [входов]</span></td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td><span>ОЗУ [КБайт]</span></td>
+                            <td>32</td>
+                        </tr>
+                        <tr>
+                            <td><span>ПЗУ [КБайт]</span></td>
+                            <td>128</td>
+                        </tr>
+                        <tr>
+                            <td><span>Пластик</span></td>
+                            <td>LQFP64</td>
+                        </tr>
+                        <tr>
+                            <td><span>Таймеры</span></td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td><span>ЦАП</span></td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td><span>ЦАП [каналов]</span></td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td><span>ЦАП [разрядов]</span></td>
+                            <td>12</td>
+                        </tr>
+                        <tr>
+                            <td><span>Корпус</span></td>
+                            <td>LQFP64</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section>
+                <h2>Ресурсы</h2>
+                <ul class="external_source">
+                    <li><a href="https://ic.milandr.ru/products/mikrokontrollery_i_protsessory/32_razryadnye_mikrokontrollery/k1986ve92qi/" title="" target="_blank">https://ic.milandr.ru/</a> - Сайт производителя</a></li>
+                    <li><a href="https://github.com/mdr32/MCU" title="" target="_blank">https://github.com/mdr32/MCU</a> - MDR32 MCU-репозиторий</a></li>
+                </ul>
+            </section>
+        </main>
+        <footer>
+            <a href="https://mdr32.ru/" title="" class="logo logo_link" target="_blank"><img src="./src/img/logo.svg" alt="" width="100"></a>
+        </footer>
+    </div>
+</body>
 </html>

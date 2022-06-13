@@ -1,0 +1,23 @@
+{
+  "name": "mdr32.ru",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "lessc src/less/mixin.less styles.css",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kichMan/mdr32.ru.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kichMan/mdr32.ru/issues"
+  },
+  "homepage": "https://github.com/kichMan/mdr32.ru#readme",
+  "devDependencies": {
+    "less": "^4.1.3"
+  }
+}
