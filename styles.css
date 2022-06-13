@@ -1,0 +1,140 @@
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Russo One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/russoone/v14/Z9XUDmZRWg6M1LvRYsH-yA.ttf) format('truetype');
+}
+html {
+  height: 100%;
+  width: 100%;
+}
+body {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background: #fff;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Russo One', sans-serif;
+  font-weight: 500;
+}
+h1 strong {
+  letter-spacing: 1px;
+}
+#container {
+  position: relative;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-content: stretch;
+  justify-content: space-between;
+}
+#container > header {
+  position: relative;
+  text-align: center;
+  flex: 0 0 auto;
+}
+#container > header:before {
+  position: relative;
+  display: block;
+  height: 20px;
+  background-color: #3e3e3e;
+  content: '';
+}
+#container > main {
+  position: relative;
+  flex: 1 1 auto;
+  max-width: 650px;
+  margin: 0 auto;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  border-top: 3px solid #eee;
+}
+#container > main h1 {
+  text-align: center;
+}
+#container > main p {
+  color: #444;
+}
+#container > main a {
+  border-bottom: 1px solid #ff8000;
+  text-decoration: none;
+  color: #f90;
+}
+#container > main a:active {
+  color: red;
+}
+#container > main a:hover {
+  border-bottom-color: #fff;
+}
+#container > footer {
+  position: relative;
+  background-color: #000;
+  flex: 0 0 auto;
+  text-align: center;
+}
+.logo {
+  position: relative;
+  display: inline-block;
+  margin: 10px auto;
+}
+.logo.logo_link {
+  position: relative;
+  display: inline-block;
+  padding: 0;
+  text-decoration: none;
+}
+.logo img {
+  width: 100px;
+  height: auto;
+}
+.feature_table {
+  position: relative;
+  display: block;
+  font-size: 13px;
+}
+.feature_table td {
+  padding: 10px 0;
+}
+.feature_table td:nth-child(1) {
+  width: 260px;
+  border-bottom: 1px dotted #eee;
+  color: #555;
+}
+.feature_table td:nth-child(2) {
+  width: 60px;
+  font-weight: bold;
+}
+.feature_table tr:last-child td {
+  border-bottom: none;
+}
+.external_source li {
+  padding: 5px 0;
+}
+.pinout_big {
+  position: relative;
+  display: block;
+  margin: 20px auto;
+}
+.pinout_big a {
+  position: relative;
+  display: inline-block;
+  border-bottom: none;
+}
