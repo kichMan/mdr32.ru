@@ -138,3 +138,6 @@ h1 strong {
   display: inline-block;
   border-bottom: none;
 }
+.pinout_big figcaption {
+  display: none;
+}
