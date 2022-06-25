@@ -1,0 +1,5 @@
+User-agent: Yandex
+Clean-param: utm_source&utm_medium&utm_term&utm_campaign /
+
+User-agent: *
+Disallow: /*?*utm_
