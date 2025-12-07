@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/kichMan/mdr32.ru#readme",
   "devDependencies": {
-    "less": "^4.1.3"
+    "express": "^5.2.1",
+    "less": "^4.1.3",
+    "serve-favicon": "^2.5.1"
   }
 }

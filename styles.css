@@ -2,15 +2,16 @@
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
+  font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/roboto/v50/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbWmT.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Russo One';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/russoone/v14/Z9XUDmZRWg6M1LvRYsH-yA.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/russoone/v18/Z9XUDmZRWg6M1LvRYsH-yA.ttf) format('truetype');
 }
 html {
   height: 100%;
@@ -65,6 +66,8 @@ h1 strong {
   margin: 0 auto;
   padding-top: 20px;
   padding-bottom: 40px;
+  padding-left: 10px;
+  padding-right: 10px;
   border-top: 3px solid #eee;
 }
 #container > main h1 {
@@ -140,4 +143,9 @@ h1 strong {
 }
 .pinout_big figcaption {
   display: none;
+}
+@media (max-width: 995px) {
+  .header_img {
+    width: 100vw;
+  }
 }
