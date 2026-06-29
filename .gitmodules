@@ -1,0 +1,3 @@
+[submodule "utils/utils"]
+	path = utils/utils
+	url = git@github.com:kichMan/Milandr-PLL-archive.git
