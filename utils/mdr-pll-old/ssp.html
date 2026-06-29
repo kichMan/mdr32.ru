@@ -1,0 +1,517 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"> 
+		<title>Настройка SSP</title>
+    <style type="text/css">
+      body {
+      	background-color:#fff; /* задаем цвет фона*/
+      	color:#993300; /* задаем цвет текста*/
+      	font-size:12px; /* задаем размер шрифта на странице */
+      	font-style:normal; /* начертание шрифта (нормальное) */
+      	font-family:Arial, Helvetica, sans-serif; /* устанавливаем шрифт */
+      }
+			u {
+				font-weight: bold;
+			}
+			i{
+				color:#4a866f;
+			}
+    </style>
+    <script type="text/javascript">
+			var SSP_CLK_EN = new Array(); var SSP_DIV = new Array(); var SSP_CLK_HZ = new Array(); var SSP_CPSDVSR = new Array(); 
+			var SSP_SCR = new Array(); var SSP_SPEED = new Array(); var SSP_FRF = new Array(); var SSP_SPH = new Array(); var SSP_SPO = new Array();
+			var SSP_LEN = new Array(); var SSP_MS = new Array(); var SSP_SOD = new Array(); 
+			var HCLK;
+			
+			var SSP_PORT = new Array(); var SSP_PORT_FUNC = new Array(); var SSP_TXD = new Array(); var SSP_CLK = new Array(); var SSP_FSS = new Array(); var SSP_RXD = new Array(); 
+			var SSP_PER = new Array(); 
+			
+			var en_ssp, sspport, sspdiv, sspHz, sspcpsdiv, sspscr, sspspeed, sspfrf, sspsph, sspspo, ssplen, sspms, sspsod, OutCod;
+			
+			function ssp_clk(num){
+				switch (num){
+					case 1:
+						en_ssp = document.ssp.en_ssp1;
+						sspport = document.ssp.ssp1port;
+						sspdiv = document.ssp.ssp1div;
+						sspHz = document.ssp.ssp1Hz;
+						sspcpsdiv = document.ssp.ssp1cpsdiv;
+						sspscr = document.ssp.ssp1scr;
+						sspspeed = document.ssp.ssp1speed;
+						sspfrf = document.ssp.ssp1frf;
+						sspsph = document.ssp.ssp1sph;
+						sspspo = document.ssp.ssp1spo;
+						ssplen = document.ssp.ssp1len;
+						sspms = document.ssp.ssp1ms;
+						sspsod = document.ssp.ssp1sod;
+						SSP_CLK_EN[1] = 1;
+						SSP_CLK_EN[2] = 0;
+					break;
+					
+					case 2:
+						en_ssp = document.ssp.en_ssp2;
+						sspport = document.ssp.ssp2port;
+						sspdiv = document.ssp.ssp2div;
+						sspHz = document.ssp.ssp2Hz;
+						sspcpsdiv = document.ssp.ssp2cpsdiv;
+						sspscr = document.ssp.ssp2scr;
+						sspspeed = document.ssp.ssp2speed;
+						sspfrf = document.ssp.ssp2frf;
+						sspsph = document.ssp.ssp2sph;
+						sspspo = document.ssp.ssp2spo;
+						ssplen = document.ssp.ssp2len;
+						sspms = document.ssp.ssp2ms;
+						sspsod = document.ssp.ssp2sod;
+						SSP_CLK_EN[2] = 1;
+						SSP_CLK_EN[1] = 0;
+					break;
+				}
+				
+				if (document.ssp.en_ssp1.checked) {
+					document.ssp.en_ssp1.removeAttribute('disabled');
+					
+					document.ssp.en_ssp2.setAttribute('disabled','disabled');
+					document.ssp.ssp2port.setAttribute('disabled','disabled');
+					document.ssp.ssp2div.setAttribute('disabled','disabled');
+					document.ssp.ssp2Hz.setAttribute('disabled','disabled');
+					document.ssp.ssp2cpsdiv.setAttribute('disabled','disabled');
+					document.ssp.ssp2scr.setAttribute('disabled','disabled');
+					document.ssp.ssp2speed.setAttribute('disabled','disabled');
+					document.ssp.ssp2frf.setAttribute('disabled','disabled');
+					document.ssp.ssp2sph.setAttribute('disabled','disabled');
+					document.ssp.ssp2spo.setAttribute('disabled','disabled');
+					document.ssp.ssp2len.setAttribute('disabled','disabled');
+					document.ssp.ssp2sod.setAttribute('disabled','disabled');
+					document.ssp.bl2.setAttribute('disabled','disabled');
+				}
+				else {
+					document.ssp.en_ssp2.removeAttribute('disabled');
+					document.ssp.ssp2port.removeAttribute('disabled');
+					document.ssp.ssp2div.removeAttribute('disabled');
+					document.ssp.ssp2Hz.removeAttribute('disabled');
+					document.ssp.ssp2cpsdiv.removeAttribute('disabled');
+					document.ssp.ssp2scr.removeAttribute('disabled');
+					document.ssp.ssp2speed.removeAttribute('disabled');
+					document.ssp.ssp2frf.removeAttribute('disabled');
+					document.ssp.ssp2sph.removeAttribute('disabled');
+					document.ssp.ssp2spo.removeAttribute('disabled');
+					document.ssp.ssp2len.removeAttribute('disabled');
+					document.ssp.ssp2sod.removeAttribute('disabled');
+					document.ssp.bl2.removeAttribute('disabled');
+				}
+				
+				if (document.ssp.en_ssp2.checked) {
+					document.ssp.en_ssp2.removeAttribute('disabled');
+					
+					document.ssp.en_ssp1.setAttribute('disabled','disabled');
+					document.ssp.ssp1port.setAttribute('disabled','disabled');
+					document.ssp.ssp1div.setAttribute('disabled','disabled');
+					document.ssp.ssp1Hz.setAttribute('disabled','disabled');
+					document.ssp.ssp1cpsdiv.setAttribute('disabled','disabled');
+					document.ssp.ssp1scr.setAttribute('disabled','disabled');
+					document.ssp.ssp1speed.setAttribute('disabled','disabled');
+					document.ssp.ssp1frf.setAttribute('disabled','disabled');
+					document.ssp.ssp1sph.setAttribute('disabled','disabled');
+					document.ssp.ssp1spo.setAttribute('disabled','disabled');
+					document.ssp.ssp1len.setAttribute('disabled','disabled');
+					document.ssp.ssp1sod.setAttribute('disabled','disabled');
+				}
+				else {
+					document.ssp.en_ssp1.removeAttribute('disabled');
+					document.ssp.en_ssp1.removeAttribute('disabled');
+					document.ssp.ssp1port.removeAttribute('disabled');
+					document.ssp.ssp1div.removeAttribute('disabled');
+					document.ssp.ssp1Hz.removeAttribute('disabled');
+					document.ssp.ssp1cpsdiv.removeAttribute('disabled');
+					document.ssp.ssp1scr.removeAttribute('disabled');
+					document.ssp.ssp1speed.removeAttribute('disabled');
+					document.ssp.ssp1frf.removeAttribute('disabled');
+					document.ssp.ssp1sph.removeAttribute('disabled');
+					document.ssp.ssp1spo.removeAttribute('disabled');
+					document.ssp.ssp1len.removeAttribute('disabled');
+					document.ssp.ssp1sod.removeAttribute('disabled');		
+				}
+				if (en_ssp.checked){
+							
+					if (SSP_CLK_EN[1]){
+						switch (sspport.selectedIndex){
+							case 0: SSP_PORT[1] = "B";
+											SSP_PORT_FUNC[1] = 2;
+											SSP_TXD[1] = 15; SSP_RXD[1] = 14; SSP_CLK[1] = 13; SSP_FSS[1] = 12;
+											SSP_PER[1] = 22;
+											break;		
+							case 1: SSP_PORT[1] = "D";
+											SSP_PORT_FUNC[1] = 3;
+											SSP_TXD[1] = 12; SSP_RXD[1] = 11; SSP_CLK[1] = 10; SSP_FSS[1] = 9;
+											SSP_PER[1] = 24;
+											break;
+							case 2: SSP_PORT[1] = "F";
+											SSP_PORT_FUNC[1] = 2;
+											SSP_TXD[1] = 0; SSP_RXD[1] = 3; SSP_CLK[1] = 1; SSP_FSS[1] = 2;
+											SSP_PER[1] = 29;
+											break;
+						}
+					}
+					
+					if (SSP_CLK_EN[2]){
+						switch (sspport.selectedIndex){
+							case 0: SSP_PORT[2] = "B"; 
+											SSP_PORT_FUNC[2] = 3; 
+											SSP_TXD[2] = 15; SSP_RXD[2] = 14; SSP_CLK[2] = 13; SSP_FSS[2] = 12; 
+											SSP_PER[2] = 22; 
+											break;
+							case 1: SSP_PORT[2] = "C"; 
+											SSP_PORT_FUNC[2] = 3; SSP_TXD[2] = 3; SSP_RXD[2] = 2; SSP_CLK[2] = 1; SSP_FSS[2] = 0; 
+											SSP_PER[2] = 23; 
+											break;
+							case 2: SSP_PORT[2] = "D"; 
+											SSP_PORT_FUNC[2] = 2; 
+											SSP_TXD[2] = 6; SSP_RXD[2] = 2; SSP_CLK[2] = 5; SSP_FSS[2] = 3; 
+											SSP_PER[2] = 24; 
+											break;
+							case 3: SSP_PORT[2] = "F"; 
+											SSP_PORT_FUNC[2] = 3; 
+											SSP_TXD[2] = 15; SSP_RXD[2] = 14; SSP_CLK[2] = 13; SSP_FSS[2] = 12; 
+											SSP_PER[2] = 29; 
+											break;
+						}
+					}
+					
+					HCLK = document.ssp.hclkHz.value;
+					
+					SSP_DIV[num] = sspdiv.selectedIndex;
+					
+					switch(SSP_DIV[num]){
+						case 0: SSP_CLK_HZ[num] = HCLK/1; break;
+						case 1: SSP_CLK_HZ[num] = HCLK/2; break;
+						case 2: SSP_CLK_HZ[num] = HCLK/4; break;
+						case 3: SSP_CLK_HZ[num] = HCLK/8; break;
+						case 4: SSP_CLK_HZ[num] = HCLK/16; break;
+						case 5: SSP_CLK_HZ[num] = HCLK/32; break;
+						case 6: SSP_CLK_HZ[num] = HCLK/64; break;
+						case 7: SSP_CLK_HZ[num] = HCLK/128; break;
+					}
+					sspHz.value = SSP_CLK_HZ[num];
+					
+					SSP_CPSDVSR[num] = sspcpsdiv.value;
+					SSP_CPSDVSR[num] = parseInt(SSP_CPSDVSR[num]);
+					if (SSP_CPSDVSR[num]%2){
+						alert("Значение должно быть четным!")
+						sspcpsdiv.value -= 1;
+						SSP_CPSDVSR[num] = sspcpsdiv.value;
+					}
+					
+					SSP_SCR[num] = sspscr.value;
+					SSP_SCR[num] = parseInt(SSP_SCR[num]);
+					if ((SSP_SCR[num] >= 0) && (SSP_SCR[num] <= 255)){
+						SSP_SPEED[num] = SSP_CLK_HZ[num]/(SSP_CPSDVSR[num]*(SSP_SCR[num]));
+						sspspeed.value = SSP_SPEED[num];
+						
+						SSP_FRF[num] = sspfrf.selectedIndex;
+						SSP_SPH[num] = sspsph.selectedIndex;
+						SSP_SPO[num] = sspspo.selectedIndex;
+						SSP_LEN[num] = ssplen.selectedIndex+4;
+						
+						if (sspms[0].checked) {
+							SSP_MS[num] = 0;
+							sspsod.setAttribute('disabled','disabled');
+						}
+						else {
+							SSP_MS[num] = 1;
+							sspsod.removeAttribute('disabled');
+							
+							if (sspsod.checked) SSP_SOD[num] = 1;
+							else SSP_SOD[num] = 0;
+						}
+						
+						
+						
+						
+					}
+					else {
+						alert("Значение должно быть от 0 до 255!")
+						sspscr.value = "";
+					}
+					
+					OutCod = '<b>void</b> SSP'+ num +'_init(<b>void</b>){<br>';
+					for (var i = 1; i <= 2; i++){
+						if (SSP_CLK_EN[i]) {
+							OutCod += "<br>&nbsp;&nbsp;MDR_RST_CLK->PER_CLOCK |= (1UL << "+SSP_PER[i]+"); <i>//тактирование порта "+SSP_PORT[i]+"</i>";
+						
+							OutCod +="<br>";
+													
+							OutCod += "<br>&nbsp;&nbsp;MDR_PORT"+SSP_PORT[i]+"->FUNC |= (("+SSP_PORT_FUNC[i]+" << "+SSP_FSS[i]+"*2) | ("+SSP_PORT_FUNC[i]+" << "+SSP_CLK[i]+"*2) | ("+SSP_PORT_FUNC[i]+" << "+SSP_RXD[i]+"*2) | ("+SSP_PORT_FUNC[i]+" << "+SSP_TXD[i]+"*2)); <i>//режим работы порта</i><br>";
+							OutCod += "&nbsp;&nbsp;MDR_PORT"+SSP_PORT[i]+"->ANALOG |= ((1 << "+SSP_FSS[i]+") | (1 << "+SSP_CLK[i]+") | (1 << "+SSP_RXD[i]+") | (1 << "+SSP_TXD[i]+")); <i>//цифровой</i><br>";
+							OutCod += "&nbsp;&nbsp;MDR_PORT"+SSP_PORT[i]+"->PWR |= ((3 << "+SSP_FSS[i]+"*2) | (3 << "+SSP_CLK[i]+"*2) | (3 << "+SSP_RXD[i]+"*2) | (3 << "+SSP_TXD[i]+"*2)); <i>//максимально быcтрый</i><br>";
+							
+							if (SSP_CLK_EN[1]){
+								OutCod += "<br>&nbsp;&nbsp;MDR_RST_CLK->PER_CLOCK |= (1 << 8); <i>//тактирование SSP1</i>";
+								OutCod += "<br>&nbsp;&nbsp;MDR_RST_CLK->SSP_CLOCK = (("+SSP_DIV[1]+" << 0)|(1 << 24)); <i>//предделитель = "+(Math.pow(2,SSP_DIV[1]))+", разрешение тактирования SSP1 </i>";
+							}
+							if (SSP_CLK_EN[2]){
+								OutCod += "<br>&nbsp;&nbsp;MDR_RST_CLK->PER_CLOCK |= (1 << 20); <i>//тактирование SSP2</i>";
+								OutCod += "<br>&nbsp;&nbsp;MDR_RST_CLK->SSP_CLOCK = (("+SSP_DIV[2]+" << 8)|(1 << 25)); <i>//предделитель = "+(Math.pow(2,SSP_DIV[2]))+", разрешение тактирования SSP2 </i>";
+							}
+							
+							OutCod += "<br><br>&nbsp;&nbsp;MDR_SSP"+i+"->CPSR = "+SSP_CPSDVSR[i]+" <i>//делитель тактовой частоты</i>;"
+							
+							OutCod += "<br>&nbsp;&nbsp;MDR_SSP"+i+"->CR0 = "+SSP_SPO[i]+" << 6; <i>//полярность сигнала</i>"
+							OutCod += "<br>&nbsp;&nbsp;MDR_SSP"+i+"->CR0 |= "+SSP_SPH[i]+" << 7 <i>//фаза сигнала</i>";
+							OutCod += "<br>&nbsp;&nbsp;MDR_SSP"+i+"->CR0 |= "+(SSP_SCR[i] - 1)+" << 8 <i>//коэффициент скорости</i>";
+							
+							OutCod += "<br>&nbsp;&nbsp;MDR_SSP"+i+"->CR0 |= "+SSP_FRF[i]+" << 4; <i>//формат кадра</i>";
+							
+							OutCod += "<br>&nbsp;&nbsp;MDR_SSP"+i+"->CR0 |= "+(SSP_LEN[i] - 1)+"; <i>//длина слова = "+SSP_LEN[i]+" бит</i>";
+							
+							OutCod += "<br>&nbsp;&nbsp;MDR_SSP"+i+"->CR1 |= (("+SSP_MS[i]+" << 2)|(1 << 1)); <i>//режим работы и включение приемопередатчика SSP</i>";
+							
+							if (SSP_MS[i]){
+								OutCod += "<br>&nbsp;&nbsp;MDR_SSP"+i+"->CR1 |= "+SSP_SOD[i]+" << 3; <i>//запрет выходных линий</i>";
+							}
+							
+						}
+					}
+					
+								
+					OutCod += '<br>}';
+					
+				}
+				else {
+					OutCod = '';
+				}
+				parent.postFrame.document.all.cod.innerHTML = OutCod;
+				
+			}
+			
+    </script>
+	</head>
+	<body>
+    <span><h2>Настройка SSP</h2></span><br>
+    	<form name="ssp">
+			<table width="90%" border="0" cellpadding="7">
+<!--Выбор SSP-->
+				<tr>
+				<td align="left"><font size="2"><u>Выбор SSP</u></font></td>
+				
+					<td align="left">
+						<input type="checkbox" name="en_ssp1" OnChange="ssp_clk(1)"><font size="2">SSP1</font>
+					</td>
+					<td align="left">
+						<input type="checkbox" name="en_ssp2" OnChange="ssp_clk(2)"><font size="2">SSP2</font>
+					</td>
+					<td>
+						<font size="2">HCLK = <input type="text" name="hclkHz" size="9" value="24000000"> Гц</font>
+					</td>
+				</tr>
+<!--Выбор выводов (SSP_TX, SSP_RX) для SSP1 и SSP2-->
+				<tr>
+					<td align="left"><font size="2"><u>Выводы</u></font></td>
+					<td align="left">
+						<select name="ssp1port"  OnChange="ssp_clk(1)">
+							<option selected>PB12, PB13, PB14, PB15</option>
+							<option>PD9, PD10, PD11, PD12</option>
+							<option>PF0, PF1, PF2, PF3</option>
+						</select>
+					</td>
+					<td align="left">
+						<select name="ssp2port"  OnChange="ssp_clk(2)">
+							<option selected>PB12, PB13, PB14, PB15</option>
+							<option>PC0, PC1, PC2, PC3</option>
+							<option>PD2, PD3, PD5, PD6</option>
+							<option>PF12, PF13, PF14, PF15</option>
+						</select>
+					</td>
+				</tr>
+<!--Выбор предделитель для SSP1 и SSP2-->
+				<tr>
+					<td align="left"><font size="2"><u>Предделитель</u></font></td>
+					<td align="left">
+						<select name="ssp1div" OnChange="ssp_clk(1)">
+							<option selected>  1</option>
+							<option>  2</option>
+							<option>  4</option>
+							<option>  8</option>
+							<option> 16</option>
+							<option> 32</option>
+							<option> 64</option>
+							<option>128</option>
+						</select>
+					</td>
+					<td align="left">
+						<select name="ssp2div" OnChange="ssp_clk(2)">
+							<option selected>  1</option>
+							<option>  2</option>
+							<option>  4</option>
+							<option>  8</option>
+							<option> 16</option>
+							<option> 32</option>
+							<option> 64</option>
+							<option>128</option>
+						</select>
+					</td>
+				</tr>
+<!--Вывод SSP_CLK-->
+				<tr>
+					<td align="left"><font size="2"><u>SSP CLK</u></font></td>
+					<td align="left">
+						<input type="text" name="ssp1Hz" value="" size=10 placeholder="SSP CLK"><font size="2"> Гц</font>
+					</td>
+					<td align="left">
+						<input type="text" name="ssp2Hz" value="" size=10 placeholder="SSP CLK"><font size="2"> Гц</font>
+					</td>
+				</tr>
+<!--Ввод CPSDVSR-->
+				<tr>
+					<td align="left"><font size="2"><u>Коэф. деления</u><br>(от 2 до 254 с шагом 2)</font></td>
+					<td align="left">
+						<input type="text" name="ssp1cpsdiv" value="2" OnChange="ssp_clk(1)" size=10>
+					</td>
+					<td align="left">
+						<input type="text" name="ssp2cpsdiv" value="2" OnChange="ssp_clk(2)" size=10>
+					</td>
+				</tr>
+<!--Ввод SCR-->
+				<tr>
+					<td align="left"><font size="2"><u>Коэф. скорости</u><br>(от 1 до 256)</font></td>
+					<td align="left">
+						<input type="text" name="ssp1scr" value="1" OnChange="ssp_clk(1)" size=10>
+					</td>
+					<td align="left">
+						<input type="text" name="ssp2scr" value="1" OnChange="ssp_clk(2)" size=10>
+					</td>
+				</tr>
+<!--Вывод скорости для SSP1 и SSP2-->
+				<tr>
+					<td align="left"><font size="2"><u>Скорость</u></font></td>
+					<td align="left">
+						<input name="ssp1speed" OnChange="ssp_clk(1)" size=10><font size="2"> бит/с</font>
+					</td>
+					<td align="left">
+						<input name="ssp2speed" OnChange="ssp_clk(2)" size=10><font size="2"> бит/с</font>
+					</td>
+				</tr>
+<!--Выберите формат кадра SSP1 и SSP2-->
+				<tr>
+					<td align="left"><font size="2"><u>Формат кадра</u></font></td>
+					<td align="left">
+						<select name="ssp1frf" OnChange="ssp_clk(1)">
+							<option selected>SPI</option>
+							<option>SSI</option>
+							<option>Microwire</option>
+						</select>
+					</td>
+					<td align="left">
+						<select name="ssp2frf" OnChange="ssp_clk(2)">
+							<option selected>SPI</option>
+							<option>SSI</option>
+							<option>Microwire</option>
+						</select>
+					</td>
+				</tr>
+<!--Выберите фазу сигнала SSP1 и SSP2-->
+				<tr>
+					<td align="left"><font size="2"><u>Фаза сигнала</u></font></td>
+					<td align="left">
+						<select name="ssp1sph" OnChange="ssp_clk(1)">
+							<option selected>0</option>
+							<option>1</option>
+						</select>
+					</td>
+					<td align="left">
+						<select name="ssp2sph" OnChange="ssp_clk(2)">
+							<option selected>0</option>
+							<option>1</option>
+						</select>
+					</td>
+				</tr>
+<!--Выберите полярность сигнала SSP1 и SSP2-->
+				<tr>
+					<td align="left"><font size="2"><u>Полярность сигнала</u></font></td>
+					<td align="left">
+						<select name="ssp1spo" OnChange="ssp_clk(1)">
+							<option selected>0</option>
+							<option>1</option>
+						</select>
+					</td>
+					<td align="left">
+						<select name="ssp2spo" OnChange="ssp_clk(2)">
+							<option selected>0</option>
+							<option>1</option>
+						</select>
+					</td>
+				</tr>
+<!--Выберите длину слова для SSP1 и SSP2-->
+				<tr>
+					<td align="left"><font size="2"><u>Длина слова</u></font></td>
+					<td align="left">
+						<select name="ssp1len" OnChange="ssp_clk(1)">
+							<option>4</option>
+							<option>5</option>
+							<option>6</option>
+							<option>7</option>
+							<option selected>8</option>
+							<option>9</option>
+							<option>10</option>
+							<option>11</option>
+							<option>12</option>
+							<option>13</option>
+							<option>14</option>
+							<option>15</option>
+							<option>16</option>
+						</select><font size="2"> бит</font>
+					</td>
+					<td align="left">
+						<select name="ssp2len" OnChange="ssp_clk(2)">
+							<option>4</option>
+							<option>5</option>
+							<option>6</option>
+							<option>7</option>
+							<option selected>8</option>
+							<option>9</option>
+							<option>10</option>
+							<option>11</option>
+							<option>12</option>
+							<option>13</option>
+							<option>14</option>
+							<option>15</option>
+							<option>16</option>
+						</select><font size="2"> бит</font>
+					</td>
+				</tr>
+<!--Выберите режим работы SSP1 и SSP2-->
+				<tr>
+					<td align="left"><font size="2"><u>Режим работы</u></font></td>
+					<td align="left">
+						<input type="radio" name="ssp1ms" value="mas" OnChange="ssp_clk(1)" checked><font size="2"> Ведущий</font><br>
+						<input type="radio" name="ssp1ms" value="sla" OnChange="ssp_clk(1)"><font size="2"> Ведомый</font><br>
+					</td>
+					<td align="left">
+						<input type="radio" name="ssp2ms" value="mas" OnChange="ssp_clk(2)" checked><font size="2"> Ведущий</font><br>
+						<input type="radio" name="ssp2ms" value="sla" OnChange="ssp_clk(2)"><font size="2"> Ведомый</font><br>
+					</td>
+				</tr>
+<!--Выберите Запрет выходных линий SSP1 и SSP2-->
+				<tr>
+					<td align="left"><font size="2"><u>Выходные линии</u></font></td>
+					<td align="left">
+						<input type="checkbox" name="ssp1sod" OnChange="ssp_clk(1)" disabled><font size="2"> Запретить SSP_TXD</font><br>
+					</td>
+					<td align="left">
+						<input type="checkbox" name="ssp2sod" OnChange="ssp_clk(2)" disabled><font size="2"> Запретить SSP_TXD</font><br>
+					</td>
+				</tr>
+<!--Кнопки-->
+				<tr>
+					<td align="left"><p><font size="2"></font></p></td>
+					<td align="left">
+						<input type="button" name="bl1" value="Рассчитать" onclick="ssp_clk(1)">
+					</td>
+					<td>
+						<input type="button" name="bl2" value="Рассчитать" onclick="ssp_clk(2)">
+					</td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>

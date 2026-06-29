@@ -1,0 +1,154 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"> 
+		<title>Простое раздвигающееся вертикальное меню</title>
+		<link rel="stylesheet" href="menu.css" type="text/css">
+    
+    <script language="JavaScript">
+      function test(page){
+				
+        switch (page){
+				/* Раздел Главная */
+          case 'main':  
+												parent.cd.rows = '100%,*,*';
+												parent.mainFrame.location.href = "main.html"; 
+                        parent.postFrame.location.href = "none.html";
+												parent.codFrame.location.href = "none.html";
+                        break;
+				/* Раздел Процессор */
+          case 'cpu':   
+												parent.cd.rows = '*,35,36%';
+												parent.mainFrame.location.href = "cpu.html";
+												parent.codFrame.location.href = "cod.html";
+                        parent.postFrame.location.href = "post.html";
+                        break;
+					case 'sys':   
+												parent.cd.rows = '*,35,58%';
+												parent.mainFrame.location.href = "systick.html";
+												parent.codFrame.location.href = "cod.html";
+                        parent.postFrame.location.href = "post.html";
+                        break;
+					case 'pwr':   
+												parent.cd.rows = '*,35,58%';
+												parent.mainFrame.location.href = "power.html";
+												parent.codFrame.location.href = "cod.html";
+                        parent.postFrame.location.href = "post.html";
+                        break;
+												
+				/* Раздел Периферия */
+          case 'port':  
+												parent.cd.rows = '*,35,48%';
+												parent.mainFrame.location.href = "port.html"; 
+												parent.codFrame.location.href = "cod.html";
+                        parent.postFrame.location.href = "post.html"; 
+                        break;
+					case 'adc':  	
+												parent.cd.rows = '*,35,23%';
+												parent.mainFrame.location.href = "adc.html";
+												parent.codFrame.location.href = "cod.html"; 
+                        parent.postFrame.location.href = "post.html"; 
+                        break;
+					case 'can':  	
+												parent.cd.rows = '*,35,45%';
+												parent.mainFrame.location.href = "can.html";
+												parent.codFrame.location.href = "cod.html"; 
+                        parent.postFrame.location.href = "post.html"; 
+                        break;
+					case 'uart':  
+												parent.cd.rows = '*,35,45%';
+												parent.mainFrame.location.href = "uart.html";
+												parent.codFrame.location.href = "cod.html"; 
+                        parent.postFrame.location.href = "post.html"; 
+                        break;
+					case 'tim':   
+												parent.cd.rows = '*,35,50%';
+												parent.mainFrame.location.href = "tim.html";
+												parent.codFrame.location.href = "cod.html"; 
+                        parent.postFrame.location.href = "post.html"; 
+                        break;
+					case 'ssp':   
+												parent.cd.rows = '*,35,24%';
+												parent.mainFrame.location.href = "ssp.html";
+												parent.codFrame.location.href = "cod.html"; 
+                        parent.postFrame.location.href = "post.html"; 
+                        break;
+					case 'i2c':   
+												parent.cd.rows = '*,35,59%';
+												parent.mainFrame.location.href = "i2c.html";
+												parent.codFrame.location.href = "cod.html"; 
+                        parent.postFrame.location.href = "post.html"; 
+                        break;
+					case 'ebc':   
+												parent.cd.rows = '*,35,38%';
+												parent.mainFrame.location.href = "ebc.html";
+												parent.codFrame.location.href = "cod.html"; 
+                        parent.postFrame.location.href = "post.html"; 
+                        break;
+					case 'usb':   
+												parent.cd.rows = '*,35,50%';
+												parent.mainFrame.location.href = "usb.html";
+												parent.codFrame.location.href = "cod.html"; 
+                        parent.postFrame.location.href = "post.html"; 
+                        break;
+				/* Раздел Прочее */
+					case 'bit':		
+												parent.cd.rows = '*,35,60%';
+												parent.mainFrame.location.href = "bit.html";
+												parent.codFrame.location.href = "cod.html"; 
+                        parent.postFrame.location.href = "post.html"; 
+                        break;
+					case 'btbt':	
+												parent.cd.rows = '90%,5%,5%';
+												parent.mainFrame.location.href = "bitbyte.html";
+												parent.codFrame.location.href = "none.html"; 
+                        parent.postFrame.location.href = "none.html"; 
+                        break;
+				/* Раздел История */
+					case 'hist':  
+												parent.cd.rows = '90%,5%,5%';
+												parent.mainFrame.location.href = "hictory.html"; 
+                        parent.postFrame.location.href = "none.html"; 
+												parent.codFrame.location.href = "none.html";
+                        break;
+					
+        }
+      }
+    </script>
+    
+	</head>
+	<body>
+		<div class="container">
+			<ul id="nav">
+				<li><a href="#" onclick="test('main')">Главная</a></li>
+				<li><a href="#" class="sub" tabindex="1">Процессор</a>
+					<ul>
+						<li><a href="#" onclick="test('cpu')">CPU</a></li>
+						<li><a href="#" onclick="test('sys')">SysTick</a></li>
+						<li><a href="#" onclick="test('pwr')">Power</a></li>
+					</ul>
+				</li>
+				<li><a href="#" class="sub" tabindex="1">Периферия</a>
+					<ul>
+						<li><a href="#" onclick="test('port')">Port</a></li>
+						<li><a href="#" onclick="test('adc')">ADC</a></li>
+						<li><a href="#" onclick="test('can')">CAN</a></li>
+						<li><a href="#" onclick="test('uart')">UART</a></li>
+						<li><a href="#" onclick="test('tim')">TIMER</a></li>
+						<li><a href="#" onclick="test('ssp')">SSP</a></li>
+						<li><a href="#" onclick="test('i2c')">I2C</a></li>
+						<li><a href="#" onclick="test('ebc')">EBC</a></li>
+						<li><a href="#" onclick="test('usb')">USB</a></li>
+					</ul>
+				</li>
+				<li><a href="#" class="sub" tabindex="1">Прочее</a>
+					<ul>
+						<li><a href="#" onclick="test('bit')">Bit Banding</a></li>
+						<li><a href="#" onclick="test('btbt')">BitByte</a></li>
+					</ul>
+				</li>
+				<li><a href="#" onclick="test('hist')">История</a></li>
+			</ul>
+		</div>
+	</body>
+</html>

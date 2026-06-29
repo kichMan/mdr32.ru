@@ -1,0 +1,156 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"> 
+		<title>Настройка SysTick</title>
+    <style type="text/css">
+      body {
+      	background-color:#fff; /* задаем цвет фона*/
+      	color:#993300; /* задаем цвет текста*/
+      	font-size:12px; /* задаем размер шрифта на странице */
+      	font-style:normal; /* начертание шрифта (нормальное) */
+      	font-family:Arial, Helvetica, sans-serif; /* устанавливаем шрифт */
+      }
+			u {
+				font-weight: bold;
+			}
+			i{
+				color:#4a866f;
+			}
+    </style>
+    <script type="text/javascript">
+			
+			var OutCod;
+			var EN_INT = new Array('запрещение', 'разрешение'); var EN_IST = new Array('LSI', 'HCLK'); 
+			var SysTickCLK, RELOAD;
+			
+			var en, ist, enint, mod, tm, unit;
+			
+			
+			function sys_clk(){
+			
+				if (document.sys.en_sys.checked) en = 1;
+				else en = 0;
+				
+				ist = document.sys.ist_sys.selectedIndex;
+				if (ist) SysTickCLK = document.sys.hclkHz.value;
+				else SysTickCLK = 40000;
+				
+				if (document.sys.enint_sys.checked) enint = 1;
+				else enint = 0;
+				
+				tm = document.sys.time_sys.value;
+				unit = document.sys.unitsys.selectedIndex;
+				mod = document.sys.mod_sys.selectedIndex;
+				
+				if (tm){
+					switch (unit){
+						case 0: RELOAD = SysTickCLK*tm; break;
+						case 1: RELOAD = SysTickCLK*tm/1000; break;
+						case 2: RELOAD = SysTickCLK*tm/1000000; break;
+						case 3: RELOAD = SysTickCLK/tm; break;
+						case 4: RELOAD = SysTickCLK/tm/1000; break;
+						case 5: RELOAD = SysTickCLK/tm/1000000; break;
+					}
+					RELOAD = Math.floor(RELOAD);
+					if (mod) RELOAD -= 1;
+					
+					if ((RELOAD) && (RELOAD <= 16777215));
+					else {
+						alert('Значение регистра LOAD должно быть в пределах от 0х000001 до 0xFFFFFF');
+						RELOAD = 0;
+					}
+					
+				}
+				
+				if (en){
+					OutCod = "<b>void</b> SysTick_Init(<b>void</b>){<br>";
+					OutCod += "&nbsp;&nbsp;SysTick->LOAD = 0x"+Number(RELOAD).toString(16)+"; <i>//стартовое значение загружаемое в регистр VAL</i><br>";	
+					OutCod += "&nbsp;&nbsp;SysTick->VAL = 0;<br>";
+					OutCod += "&nbsp;&nbsp;SysTick->CTRL = <br>";
+					OutCod += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(1 << 0) | <i>//включение таймера</i><br>";
+					OutCod += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;("+enint+" << 1) | <i>//"+EN_INT[enint]+" прерывания</i><br>";
+					OutCod += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;("+ist+" << 2)); <i>//источник синхросигнала = "+EN_IST[ist]+"</i><br>";
+					OutCod += "}";
+				}
+				else {
+					OutCod = "";
+				}
+				parent.postFrame.document.all.cod.innerHTML = OutCod;
+			}
+			
+    </script>
+	</head>
+	<body>
+    <span><h2>Настройка SysTick</h2></span><br>
+    	<form name="sys">
+			<table width="95%" border="0" cellpadding="7">
+<!--Выбор SysTick-->
+				<tr>
+				<td align="left"><font size="2"><u>Выбор SysTick</u></font></td>
+					<td align="left">
+						<input type="checkbox" name="en_sys" OnChange="sys_clk()"><font size="2">SysTick</font>
+					</td>
+					<td>
+						<font size="2">HCLK = <input type="text" name="hclkHz" size="9" maxlength='9' value="24000000"> Гц</font>
+					</td>
+				</tr>
+<!--Выберите источник синхросигнала-->
+				<tr>
+					<td align="left"><font size="2"><u>Выберите источник</u></font></td>
+					<td align="left">
+						<select name="ist_sys" OnChange="sys_clk()">
+							<option>LSI</option>
+							<option>HCLK</option>
+						</select>
+					</td>
+				</tr>
+<!--Разрешение прерывания-->
+				<tr>
+					<td align="left"><font size="2"><u>Прерывание</u></font></td>
+					<td align="left">
+						<input type="checkbox" name="enint_sys" OnChange="sys_clk()">
+					</td>
+				</tr>
+<!--Режим работы-->
+				<tr>
+					<td align="left"><font size="2"><u>Режим работы</u></font></td>
+					<td align="left">
+						<select name="mod_sys" OnChange="sys_clk()">
+							<option>Таймер</option>
+							<option>Задержка</option>
+						</select>
+					</td>
+				</tr>
+<!--Введите желаемое время/частоту прерывания таймера-->
+				<tr>
+					<td align="left"><font size="2"><u>Желаемое время/частота</u></font></td>
+					<td align="left">
+						<input type="text" name="time_sys" value="1" size=5>
+					</td>
+				</tr>
+<!--Введите единицы-->
+				<tr>
+					<td align="left"><font size="2"><u>Выберите единицы</u></font></td>
+					<td align="left">
+						<select name="unitsys">
+							<option>сек</option>
+							<option>мсек</option>
+							<option>мксек</option>
+							<option>Гц</option>
+							<option>кГц</option>
+							<option>МГц</option>
+						</select>
+					</td>
+				</tr>
+<!--Кнопки-->
+				<tr>
+					<td align="left"><p><font size="2"></font></p></td>
+					<td align="left">
+						<input type="button" name="bl1" value="Рассчитать" onclick="sys_clk()">
+					</td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>

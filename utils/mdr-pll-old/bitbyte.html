@@ -1,0 +1,270 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"> 
+		<title>BitByte</title>
+    <style type="text/css">
+      body {
+      	background-color:#fff; /* задаем цвет фона*/
+      	color:#993300; /* задаем цвет текста*/
+      	font-size:12px; /* задаем размер шрифта на странице */
+      	font-style:normal; /* начертание шрифта (нормальное) */
+      	font-family:Arial, Helvetica, sans-serif; /* устанавливаем шрифт */
+      }
+			u {
+				font-weight: bold;
+			}
+			.line {
+				border-left: 2px solid #ccc; /* Параметры линии */ 
+    		padding-left: 10px; /* Расстояние от линии до текста */ 
+			}
+    </style>
+    <script type="text/javascript">
+      
+			var decTohex = new Array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F');
+
+			/*Функция перевода HEX в BIN*/
+			
+      function ByteBit(){
+			
+				var B = new Array('0','0','0','0','0','0','0','0');
+			
+				var hBox = new Array(document.btbt.bit0, document.btbt.bit1, document.btbt.bit2, document.btbt.bit3, document.btbt.bit4,
+				document.btbt.bit5, document.btbt.bit6, document.btbt.bit7, document.btbt.bit8, document.btbt.bit9, document.btbt.bit10,
+				document.btbt.bit11, document.btbt.bit12, document.btbt.bit13, document.btbt.bit14, document.btbt.bit15, document.btbt.bit16,
+				document.btbt.bit17, document.btbt.bit18, document.btbt.bit19, document.btbt.bit20, document.btbt.bit21, document.btbt.bit22,
+				document.btbt.bit23, document.btbt.bit24, document.btbt.bit25, document.btbt.bit26, document.btbt.bit27, document.btbt.bit28,
+				document.btbt.bit29, document.btbt.bit30, document.btbt.bit31);
+			
+				var BinHold;
+				var Valhex = parseInt(document.btbt.hexV.value, 16);
+				
+				var q, isx = Valhex, fl = 0;
+				
+				for (var i = 0; i < 8; i++){
+					if (isx & (1 << 31)) {
+						isx &=~ (1 << 31);
+						fl = 1;
+					}
+					q = isx % 16;
+					if ((i == 7) && (fl)) q |= (1 << 3);
+					B[i] = decTohex[q];
+					isx >>= 4;
+				}
+				
+				document.btbt.hexV.value = '';
+				for (var i = 7; i != -1; i--)
+				{
+					document.btbt.hexV.value += B[i];
+				}
+				
+				for (var i = 0; i < 32; i++){
+					BinHold = Valhex%2;
+					if (BinHold)
+						hBox[i].setAttribute('checked','checked');
+					
+					else 
+						hBox[i].removeAttribute('checked');
+					
+					Valhex = (Valhex/2) >> 0;
+				}
+				
+				/* parent.postFrame.document.all.cod.innerHTML += '+'+Valhex+'->'; */
+				
+      }
+			
+			/*Функция перевода BIN в HEX*/
+
+			
+			function BitByte(){
+			
+				var vHex = 0, Q = 0, q = 0;
+				
+				
+				var A = new Array('0','0','0','0','0','0','0','0');
+				
+				var Box = new Array(document.btbt.vbit0, document.btbt.vbit1, document.btbt.vbit2, document.btbt.vbit3, document.btbt.vbit4,
+				document.btbt.vbit5, document.btbt.vbit6, document.btbt.vbit7, document.btbt.vbit8, document.btbt.vbit9, document.btbt.vbit10,
+				document.btbt.vbit11, document.btbt.vbit12, document.btbt.vbit13, document.btbt.vbit14, document.btbt.vbit15, document.btbt.vbit16,
+				document.btbt.vbit17, document.btbt.vbit18, document.btbt.vbit19, document.btbt.vbit20, document.btbt.vbit21, document.btbt.vbit22,
+				document.btbt.vbit23, document.btbt.vbit24, document.btbt.vbit25, document.btbt.vbit26, document.btbt.vbit27, document.btbt.vbit28,
+				document.btbt.vbit29, document.btbt.vbit30, document.btbt.vbit31);
+				
+				
+				for (var n = 0; n < 31; n++){
+					if (Box[n].checked) vHex |= (1 << n);
+					else vHex &=~ (1 << n);
+				}
+				
+				for (var i = 0; i < 8; i++)
+				{	
+					q = vHex % 16;
+					
+					if (i == 7){
+						if (Box[31].checked) q |= (1 << 3);
+						else q &=~ (1 << 3);
+					}
+					
+					A[i] = decTohex[q];
+					
+					vHex >>= 4;
+					
+				}
+				
+				
+				document.btbt.vhexV.value = '0x';
+				for (var i = 7; i != -1; i--)
+				{
+					document.btbt.vhexV.value += A[i];
+				}
+				
+			}
+			
+			/*Функция перевода DEC в HEX*/
+			
+			function perevDecToHex(){
+				var DecValue = document.btbt.decVal.value;
+				var q, i, fl = 0;
+				var Mas = new Array();
+				
+				if (DecValue > 4294967295){
+					alert('Значение введенного десятичного числа не должно превышать 4294967295!');
+					document.btbt.decVal.select();
+				} 
+				else{
+				
+					if (DecValue & (1 << 31)){
+						DecValue &=~ (1 << 31);
+						fl = 1;
+					}
+					for (i = 0; i < 8; i++){
+						q = DecValue % 16;
+						if ((i == 7) && (fl)) q |= (1 << 3);
+						Mas[i] = decTohex[q];
+						DecValue >>= 4;
+					}
+					
+					document.btbt.hexVal.value = '';
+					i--;
+					while (i >= 0){
+						document.btbt.hexVal.value += Mas[i--];
+					}
+				}
+			}
+			
+			/*Функция перевода HEX в DEC*/
+			
+			function perevHexToDec(){
+				var DecValue = parseInt(document.btbt.hexVal.value, 16), q = 0, i = 0, fl = 0;
+				var mas = new Array();
+				
+				document.btbt.decVal.value = DecValue;
+				
+				for (i = 0; i < 8; i++){
+					if (DecValue & (1 << 31)){
+						DecValue &=~ (1 << 31);
+						fl = 1;
+					}
+					q = DecValue % 16;
+					if ((i == 7) && (fl)) q |= (1 << 3);
+					mas[i] = decTohex[q];
+					DecValue >>= 4;
+				}
+				
+				document.btbt.hexVal.value = '';
+				
+				i--;
+				while (i >= 0){
+					document.btbt.hexVal.value += mas[i--];
+				}
+				
+			}
+			
+    </script>
+	</head>
+	<body>
+    <span><h2>BitByte</h2></span><br>
+    <form name="btbt">
+			<table width="100%" border="0" cellpadding="0">
+				<tr>
+					<td align="left" colspan="32">
+						<br><font size='2'><u>Перевод шестнадцатиричного в двоичный</u></font><br>&nbsp
+					</td>
+				</tr>
+<!--Ввод шестандцатиричного числа-->
+				<tr>
+					<td align="left" colspan="5">
+						0x <input type="text" name="hexV" value="" maxlength='8' size=10 placeholder="ввод HEX">
+					</td>
+					<td align="left" colspan="27">
+						<input type="button" name="bl1" value="Рассчитать" onclick="ByteBit()">
+					</td>
+				</tr>
+
+<!--Вывод двоичного-->
+				<tr>
+					<script  type="text/javascript">
+						for (var i = 31; i >= 0; i--)
+							document.write('<td align="center"><font size="1pt"> '+i+'</font></td>')
+					</script>
+				</tr>
+				<tr>
+					<script  type="text/javascript">
+						for (var i = 31; i >= 0; i--)
+							document.write('<td align="center"> <input type="checkbox" name="bit'+i+'" disabled> </td>')
+					</script>
+				</tr>
+				<tr>
+					<td align="left" colspan="32">
+						<br><font size='2'><u>Перевод двоичного в шестнадцатиричный</u></font><br>&nbsp
+					</td>
+				</tr>
+<!--Ввод двоичного-->
+				<tr>
+					<script  type="text/javascript">
+						for (var i = 31; i >= 0; i--)
+							document.write('<td align="center"><font size="1pt"> '+i+'</font></td>')
+					</script>
+				</tr>
+				<tr>
+					<script  type="text/javascript">
+						for (var i = 31; i >= 0; i--)
+							document.write('<td align="center"> <input type="checkbox" name="vbit'+i+'" onchange="BitByte()"> </td>')
+					</script>
+				</tr>
+<!--Вывод байта-->
+				<tr>
+					<td align="left" colspan="32">
+						<input readonly type="text" name="vhexV" value="" size=10 placeholder="вывод HEX">
+					</td>
+				</tr>
+				<tr>
+					<td align='left' colspan='32'>
+						<br><font size='2'><u>Перевод десятичного в шестнадцатиричный</u></font><br>&nbsp
+					</td>
+				</tr>
+				<tr>
+<!--Ввод десятичного числа-->
+					<td align="left" colspan="5">
+						<input type="text" name="decVal" value="" maxlength='10' size=10 placeholder="DEC">
+					</td>
+					<td align="left" colspan="3">
+						<< >>
+					</td>
+<!--Ввод шестнадцатиричного числа-->
+					<td align="left" colspan="24">
+						&nbsp&nbsp0x <input type="text" name="hexVal" value="" maxlength='8' size=10 placeholder="HEX">
+					</td>
+				</tr>
+				<tr>
+					<td align="left" colspan="9">
+						<input type="button" name="toHex" value="     toHex    " onclick="perevDecToHex()">
+					</td>
+					<td align="left" colspan="23">
+						<input type="button" name="toDec" value="     toDec    " onclick="perevHexToDec()">
+					</td>
+				</tr>
+			</table>
+    </form>
+	</body>
+</html>

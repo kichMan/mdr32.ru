@@ -1,0 +1,128 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"> 
+		<title>Bit Banding</title>
+    <style type="text/css">
+      body {
+      	background-color:#fff; /* задаем цвет фона*/
+      	color:#993300; /* задаем цвет текста*/
+      	font-size:12px; /* задаем размер шрифта на странице */
+      	font-style:normal; /* начертание шрифта (нормальное) */
+      	font-family:Arial, Helvetica, sans-serif; /* устанавливаем шрифт */
+      }
+			u {
+				font-weight: bold;
+			}
+    </style>
+    <script type="text/javascript">
+      
+			var AdresPort, AdresSaveBit, AdresAccessBit, NumBitPort, Offset, OffsetAdressPort, AdresBit;
+			var PeriphBase = new Array(	0x400A8000, 0x400B0000, 0x400B8000, 0x400C0000,	0x400C8000, 0x400E8000 );
+			var PeriphName = new Array( 'A', 'B', 'C', 'D', 'E', 'F' );
+			var tmp, OutCod;
+			
+      function BitBand(lev){
+
+				if (lev){
+					tmp = PeriphBase[document.bit.AdrPort.selectedIndex];
+					
+					AdresPort = tmp;
+					AdresSaveBit = parseInt('0x40000000',16);
+					AdresAccessBit = parseInt('0x42000000',16);
+					
+	        NumBitPort = document.bit.BitPort.selectedIndex;
+							
+					Offset = AdresPort - AdresSaveBit;
+					
+					OffsetAdressPort = (Offset * 32) + (NumBitPort * 4);
+					
+					AdresBit = AdresAccessBit + OffsetAdressPort;
+					/*
+	        OutCod = 'Адрес порта = 0х'+Number(AdresPort).toString(16)+'<br>';
+	        OutCod += 'Адрес области хранения бит = 0х'+Number(AdresSaveBit).toString(16)+'<br>';
+					OutCod += 'Адрес области доступа к битам = 0х'+Number(AdresAccessBit).toString(16)+'<br>';
+					OutCod += 'Бит порта = '+NumBitPort+'<br>';
+					OutCod += 'Cмещение = '+Number(Offset).toString(16)+'<br>';
+					OutCod += 'Cмещение адреса порта доступа к биту = '+Number(OffsetAdressPort).toString(16)+'<br>';
+					OutCod += 'Адрес в области доступа к биту = '+Number(AdresBit).toString(16)+'<br>';
+					*/
+					OutCod = '<br><i>//Указатель на битовый адрес<br></i>';
+					OutCod += '<b>#define</b> Port'+PeriphName[document.bit.AdrPort.selectedIndex]+'_Bit'+NumBitPort+' (*((<b>volatile unsigned long</b> *) 0x'+Number(AdresBit).toString(16)+'))<br><br>';
+					
+					OutCod += 'Port'+PeriphName[document.bit.AdrPort.selectedIndex]+'_Bit'+NumBitPort+' = 1; <i>//установить бит '+NumBitPort+' в единицу</i><br>';
+					OutCod += 'Port'+PeriphName[document.bit.AdrPort.selectedIndex]+'_Bit'+NumBitPort+' = 0; <i>//установить бит '+NumBitPort+' в ноль</i><br>';
+					parent.postFrame.document.all.cod.innerHTML += OutCod;
+        }
+				else{
+					parent.postFrame.document.all.cod.innerHTML = '';
+				}
+				
+      }
+    </script>
+	</head>
+	<body>
+    <span><h2>Bit Banding</h2></span><br>
+    <form name="bit">
+			<table width="60%" border="0" cellpadding="7">
+<!--Ввод адреса порта-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>Выбор переферии</u></font>
+					</td>
+					<td align="left">
+						<select name="AdrPort">
+							<option> MDR_PORTA </option>
+							<option> MDR_PORTB </option>
+							<option> MDR_PORTC </option>
+							<option> MDR_PORTD </option>
+							<option> MDR_PORTE </option>
+							<option> MDR_PORTF </option>
+						</select>
+					</td>
+				</tr>
+
+<!--Выбор бита порта-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>Бит порта</u></font>
+					</td>
+					<td align="left">
+		        <select name="BitPort">
+		  				<option> 0</option>
+		  				<option> 1</option>
+		  				<option> 2</option>
+		  				<option> 3</option>
+		  				<option> 4</option>
+		  				<option> 5</option>
+		  				<option> 6</option>
+		  				<option> 7</option>
+		  				<option> 8</option>
+		  				<option> 9</option>
+		  				<option>10</option>
+		  				<option>11</option>
+		  				<option>12</option>
+		  				<option>13</option>
+		  				<option>14</option>
+		  				<option>15</option>
+		  			</select>
+					</td>
+				</tr>
+
+<!--Кнопки-->
+				<tr>
+					<td align="left"><p><font size="2"></font></p></td>
+					<td align="left">
+						<input type="button" name="bt" value="Рассчитать" onclick="BitBand(1)">
+					</td>
+				</tr>
+				<tr>
+				<td align="left"><p><font size="2"></font></p></td>
+				<td align="left">
+						<input type="button" name="bt" value="Стереть 'Код для вставки'" onclick="BitBand(0)">
+					</td>
+				</tr>
+			</table>
+    </form>
+	</body>
+</html>

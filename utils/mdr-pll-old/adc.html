@@ -1,0 +1,452 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"> 
+		<title>Настройка ADC</title>
+    <style type="text/css">
+      body {
+      	background-color:#fff; /* задаем цвет фона*/
+      	color:#993300; /* задаем цвет текста*/
+      	font-size:12px; /* задаем размер шрифта на странице */
+      	font-style:normal; /* начертание шрифта (нормальное) */
+      	font-family:Arial, Helvetica, sans-serif; /* устанавливаем шрифт */
+      }
+			u {
+				font-weight: bold;
+			}
+    </style>
+    <script type="text/javascript">
+			var LSE = 32000, LSI = 40000;
+			var ADC_CLK_EN = new Array(); var IST = new Array(); var ADC_C1 = new Array(); var ADC_C2 = new Array();  var ADC2_DIV= new Array();
+			var ADC_C1Hz = new Array(); var ADC_C2Hz = new Array(); 
+			var div, ADC;
+			var DIV_CLK = new Array(); var ADC_CLK = new Array(); var MREF = new Array(); var REGCH = new Array();
+			var NUMCH = new Array(); var SAMPLE = new Array(); 
+			var en_adc, istclk, adc1, adc1Hz, adc2, adc2Hz, adc3div, adcclk, adcdivclk, adcclk, mref, chch, num_ch, chchref, smpl, OutCod;
+			function adc_clk(num){
+				
+				var HCLK = document.adc.hclkHz.value;
+				var CPU_C1 = document.adc.cpuc1Hz.value;
+				var CPU_C2 = document.adc.cpuc2Hz.value;
+				var USB_C1 = document.adc.usbc1Hz.value;
+				var USB_C2 = document.adc.usbc2Hz.value;
+				
+				switch (num){
+					case 1:
+						en_adc = document.adc.en_adc1;
+						istclk = document.adc.istclk1;
+						adc1 = document.adc.adc11;
+						adc1Hz = document.adc.adc11Hz;
+						adc2 = document.adc.adc21;
+						adc2Hz = document.adc.adc21Hz
+						adc3div = document.adc.adc31div
+						adcclk = document.adc.adcclk1;
+						adcdivclk = document.adc.adc1divclk;
+						adctclk = document.adc.adc1clkHz;
+						mref = document.adc.mref1;
+						chch = document.adc.chch1;
+						num_ch = document.adc.num_ch1;
+						chchref = document.adc.chchref1;
+						smpl = document.adc.sample1;
+					break;
+					case 2:
+						en_adc = document.adc.en_adc2;
+						istclk = document.adc.istclk2;
+						adc1 = document.adc.adc12;
+						adc1Hz = document.adc.adc12Hz;
+						adc2 = document.adc.adc22;
+						adc2Hz = document.adc.adc22Hz
+						adc3div = document.adc.adc32div
+						adcclk = document.adc.adcclk2;
+						adcdivclk = document.adc.adc2divclk;
+						adctclk = document.adc.adc2clkHz;
+						chch = document.adc.chch2;
+						mref = document.adc.mref2;
+						num_ch = document.adc.num_ch2;
+						chchref = document.adc.chchref2;
+						smpl = document.adc.sample2;
+					break;
+				}
+				
+				if (en_adc.checked) ADC_CLK_EN[num] = 1;
+				else ADC_CLK_EN[num] = 0;
+				
+				if (ADC_CLK_EN[num]){
+					for (var i = 0; i < istclk.length; i++){
+						if (istclk[i].checked) {
+							switch (istclk[i].value){
+								case "cpuclk": 
+									adc1.setAttribute('disabled','disabled');
+									adc1Hz.setAttribute('disabled','disabled');
+									adc2.setAttribute('disabled','disabled');
+									adc2Hz.setAttribute('disabled','disabled');
+									adc3div.setAttribute('disabled','disabled');
+									adcclk.setAttribute('disabled','disabled');
+									
+									adcdivclk.removeAttribute('disabled'); 
+									IST[num] = 1;
+								break;
+								case "adcclk": 
+									adc1.removeAttribute('disabled');
+									adc1Hz.removeAttribute('disabled'); 
+									adc2.removeAttribute('disabled'); 
+									adc2Hz.removeAttribute('disabled'); 
+									adc3div.removeAttribute('disabled'); 
+									adcclk.removeAttribute('disabled');
+									
+									adcdivclk.setAttribute('disabled','disabled');
+									IST[num] = 2;
+								break;
+							}
+						}
+					}
+					
+					if (IST[num] == 1){
+						DIV_CLK[num] = adcdivclk.selectedIndex;
+						
+						switch (DIV_CLK[num]){
+							default: ADC_CLK[num] = HCLK; break;
+							case 1: ADC_CLK[num] = HCLK/2; break;
+							case 2: ADC_CLK[num] = HCLK/4; break;
+							case 3: ADC_CLK[num] = HCLK/8; break;
+							case 4: ADC_CLK[num] = HCLK/16; break;
+							case 5: ADC_CLK[num] = HCLK/32; break;
+							case 6: ADC_CLK[num] = HCLK/64; break;
+							case 7: ADC_CLK[num] = HCLK/128; break;
+							case 8: ADC_CLK[num] = HCLK/256; break;
+							case 9: ADC_CLK[num] = HCLK/512; break;
+							case 10: ADC_CLK[num] = HCLK/1024; break;
+							case 11: ADC_CLK[num] = HCLK/2048; break;
+						}
+					}
+					else if (IST[num] == 2){
+						DIV_CLK[num] = 0;
+						ADC_C1[num] = adc1.selectedIndex;
+						document.adc.adc11.options[ADC_C1[num]].selected = true; ADC_C1[1] = ADC_C1[num];
+						document.adc.adc12.options[ADC_C1[num]].selected = true; ADC_C1[2] = ADC_C1[num];
+						
+						if (ADC_C1[num]){
+							switch (ADC_C1[num]){
+								case 0: ADC_C1Hz[num] = CPU_C1; break;
+								case 1: ADC_C1Hz[num] = USB_C1; break;
+								case 2: ADC_C1Hz[num] = CPU_C2; break;
+								case 3: ADC_C1Hz[num] = USB_C2; break;
+							}
+							document.adc.adc11Hz.value = ADC_C1Hz[num];
+							document.adc.adc12Hz.value = ADC_C1Hz[num];
+						}
+						
+						ADC_C2[num] = adc2.selectedIndex;
+						document.adc.adc21.options[ADC_C2[num]].selected = true; ADC_C2[1] = ADC_C2[num];
+						document.adc.adc22.options[ADC_C2[num]].selected = true; ADC_C2[2] = ADC_C2[num];
+						
+						if (ADC_C2[num]){
+							switch (ADC_C2[num]){
+								case 0: ADC_C2Hz[num] = LSE; break;
+								case 1: ADC_C2Hz[num] = LSI; break;
+								case 2: ADC_C2Hz[num] = ADC_C1Hz[num]; break;
+							}
+							document.adc.adc21Hz.value = ADC_C2Hz[num];
+							document.adc.adc22Hz.value = ADC_C2Hz[num];
+							
+							ADC2_DIV[num] = adc3div.selectedIndex;
+							document.adc.adc31div.options[ADC2_DIV[num]].selected = true;
+							document.adc.adc32div.options[ADC2_DIV[num]].selected = true;
+							
+							switch (ADC2_DIV[num]){
+								case 0: ADC_C2Hz[num] /= 1; break;
+								case 1: ADC_C2Hz[num] /= 2; break;
+								case 2: ADC_C2Hz[num] /= 4; break;
+								case 3: ADC_C2Hz[num] /= 8; break;
+								case 4: ADC_C2Hz[num] /= 16; break;
+								case 5: ADC_C2Hz[num] /= 32; break;
+								case 6: ADC_C2Hz[num] /= 64; break;
+								case 7: ADC_C2Hz[num] /= 128; break;
+								case 8: ADC_C2Hz[num] /= 256; break;
+							}
+							if (ADC2_DIV[num]) ADC2_DIV[num] += 7;
+							
+							ADC2_DIV[1] = ADC2_DIV[num];
+							ADC2_DIV[2] = ADC2_DIV[num];
+							
+							document.adc.adcclk1.value = ADC_C2Hz[num];
+							document.adc.adcclk2.value = ADC_C2Hz[num];
+							ADC_CLK[num] = ADC_C2Hz[num];
+						}
+						
+					}
+					adctclk.value = ADC_CLK[num];
+					
+					for (var i = 0; i < mref.length; i++){
+						if (mref[i].checked) MREF[num] = i;
+					}
+					
+					NUMCH[num] = num_ch.selectedIndex;
+					
+					for (var i = 0; i < smpl.length; i++){
+						if (smpl[i].checked) SAMPLE[num] = i;
+					}
+				}
+				
+				OutCod = '<b>void</b> ADC_init(<b>void</b>){<br>';
+				if ((IST[1] == 2) || (IST[2] == 2))
+					OutCod += '&nbsp;&nbsp;MDR_RST_CLK->ADC_MCO_CLOCK = ('+ADC_C1[num]+' <i>/*источник для ADC_C1*/</i><br>&nbsp;&nbsp;| ('+ADC_C2[num]+' << 4) <i>/*источник для ADC_C2*/</i><br>&nbsp;&nbsp;| ('+ADC2_DIV[num]+' << 8) <i>/*делитель для ADC_C3*/</i><br>&nbsp;&nbsp;| (1 << 13)); <i>/*разрешение тактовой частоты ADC_CLK*/</i><br>';
+				if (ADC_CLK_EN[1] || ADC_CLK_EN[2])
+					OutCod += '<br>&nbsp;&nbsp;MDR_RST_CLK->PER_CLOCK |= (1 << 17); <i>//тактирование АЦП</i><br>';
+				for (var i = 1; i <= 2; i++){
+					if (ADC_CLK_EN[i]){
+						OutCod += '<br>&nbsp;&nbsp;MDR_PORTD->OE &=~ (1 << '+NUMCH[i]+'); <i>//вход</i><br>&nbsp;&nbsp;MDR_PORTD->ANALOG &=~ (1 << '+NUMCH[i]+'); <i>//аналоговый</i><br>';
+						OutCod += '<br>&nbsp;&nbsp;MDR_ADC->ADC'+i+'_CFG = (1 <i>/*начало преобразования*/</i><br>&nbsp;&nbsp;|('+(IST[i]-1)+' << 2) <i>/*источник синхросигнала*/</i><br>&nbsp;&nbsp;|('+SAMPLE[i]+' << 3) <i>/*выбор запуска*/</i><br>&nbsp;&nbsp;|('+NUMCH[i]+' << 4) <i>/*номер канала преобразования*/</i><br>&nbsp;&nbsp;|('+MREF[i]+' << 11) <i>/*источник опорного*/</i><br>&nbsp;&nbsp;|('+DIV_CLK[i]+' << 12)); <i>/*коэффициент деления частоты*/</i><br>';
+					}
+				}
+				OutCod += '}';
+				
+				parent.postFrame.document.all.cod.innerHTML = OutCod;
+				
+			}
+    </script>
+	</head>
+	<body>
+    <span><h2>Настройка АЦП</h2></span><br>
+    	<form name="adc">
+			<table width="90%" border="0" cellpadding="7">
+<!--Выбор АЦП-->
+				<tr>
+					<td align="left"><font size="2"><u>Выбор АЦП</u></font></td>
+					<td align="left">
+						<input type="checkbox" name="en_adc1" OnChange="adc_clk(1)"><font size="2">ADC1</font>
+					</td>
+					<td align="left">
+						<input type="checkbox" name="en_adc2" OnChange="adc_clk(2)"><font size="2">ADC2</font>
+					</td>
+					<td>
+						<font size="2">HCLK = <input type="text" name="hclkHz" size="9" value="24000000"> Гц</font>
+					</td>
+				</tr>
+<!--Выбор источника синхросигнала CLK для работы АЦП-->
+				<tr>
+					<td align="left"><font size="2"><u>Источник синхросигнала</u></font></td>
+					<td align="left">
+						<input type="radio" name="istclk1" value="cpuclk" OnChange="adc_clk(1)" checked> <font size="2">CPU_CLK</font><br>
+						<input type="radio" name="istclk1" value="adcclk" OnChange="adc_clk(1)"> <font size="2">ADC_CLK</font>
+					</td>
+					<td align="left">
+						<input type="radio" name="istclk2" value="cpuclk" OnChange="adc_clk(2)" checked> <font size="2">CPU_CLK</font><br>
+						<input type="radio" name="istclk2" value="adcclk" OnChange="adc_clk(2)"> <font size="2">ADC_CLK</font>
+					</td>
+					<td>
+						<font size="2">CPUC1 = <input type="text" name="cpuc1Hz" size="9" value="8000000"> Гц</font>
+					</td>
+				</tr>
+<!--Выбор источника синхросигнала для ADC_CLK-->
+				<tr>
+					<td align="left"><font size="2"><u>Источник синхросигнала для ADC CLK</u></font></td>
+					<td align="left">
+						<select name="adc11" OnChange="adc_clk(1)">
+								<option selected>CPU_C1</option>
+								<option>USB_C1</option>
+								<option>CPU_C2</option>
+								<option>USB_C2</option>
+							</select>
+					</td>
+					<td align="left">
+						<select name="adc12" OnChange="adc_clk(2)">
+								<option selected>CPU_C1</option>
+								<option>USB_C1</option>
+								<option>CPU_C2</option>
+								<option>USB_C2</option>
+							</select>
+					</td>
+					<td>
+						<font size="2">CPUC2 = <input type="text" name="cpuc2Hz" size="9" value="24000000"> Гц</font>
+					</td>
+				</tr>
+<!--Вывод ADC_C1-->
+				<tr>
+					<td align="left"><font size="2"><u>ADC C1</u></font></td>
+					<td align="left">
+						<input type="text" name="adc11Hz" value="" size=10 placeholder="ADC_C1">	Гц
+					</td>
+					<td align="left">
+						<input type="text" name="adc12Hz" value="" size=10 placeholder="ADC_C1">	Гц
+					</td>
+					<td>
+						<font size="2">USBC1 = <input type="text" name="usbc1Hz" size="9" value="8000000"> Гц</font>
+					</td>
+				</tr>
+<!--Выбор источника для ADC_C2-->
+				<tr>
+					<td align="left"><font size="2"><u>Источник для ADC C2</u></font></td>
+					<td align="left">
+						<select name="adc21" OnChange="adc_clk(1)">
+								<option selected>LSE</option>
+								<option>LSI</option>
+								<option>ADC_C1</option>
+							</select>
+					</td>
+					<td align="left">
+						<select name="adc22" OnChange="adc_clk(2)">
+								<option selected>LSE</option>
+								<option>LSI</option>
+								<option>ADC_C1</option>
+							</select>
+					</td>
+					<td>
+						<font size="2">USBC2 = <input type="text" name="usbc2Hz" size="9" value="96000000"> Гц</font>
+					</td>
+				</tr>
+<!--Вывод ADC_C2-->
+				<tr>
+					<td align="left"><font size="2"><u>ADC C2</u></font></td>
+					<td align="left">
+						<input type="text" name="adc21Hz" value="" size=10 placeholder="ADC_C2">	Гц
+					</td>
+					<td align="left">
+						<input type="text" name="adc22Hz" value="" size=10 placeholder="ADC_C2">	Гц
+					</td>
+				</tr>
+<!--Выбор предделителя для ADC_C3-->
+				<tr>
+					<td align="left"><font size="2"><u>Делитель для ADC C3</u></font></td>
+					<td align="left">
+						<select name="adc31div" OnChange="adc_clk(1)">
+								<option>  1</option>
+								<option>  2</option>
+								<option>  4</option>
+								<option>  8</option>
+								<option> 16</option>
+								<option> 32</option>
+								<option> 64</option>
+								<option>128</option>
+								<option>256</option>
+							</select>
+					</td>
+					<td align="left">
+						<select name="adc32div" OnChange="adc_clk(2)">
+								<option>  1</option>
+								<option>  2</option>
+								<option>  4</option>
+								<option>  8</option>
+								<option> 16</option>
+								<option> 32</option>
+								<option> 64</option>
+								<option>128</option>
+								<option>256</option>
+							</select>
+					</td>
+				</tr>
+<!--Вывод ADC_C3-->
+				<tr>
+					<td align="left"><font size="2"><u>ADC C3</u></font></td>
+					<td align="left">
+						<input type="text" name="adcclk1" value="" size=10  placeholder="ADC_C3">	Гц
+					</td>
+					<td align="left">
+						<input type="text" name="adcclk2" value="" size=10  placeholder="ADC_C3">	Гц
+					</td>
+				</tr>
+<!--Выбор коэффициента деления для CPU_CLK-->
+				<tr>
+					<td align="left"><font size="2"><u>Коэффициент деления для CPU CLK</u></font></td>
+					<td align="left">
+						<select name="adc1divclk" OnChange="adc_clk(1)">
+							<option>1</option>
+							<option>2</option>
+							<option>4</option>
+							<option>8</option>
+							<option>16</option>
+							<option>32</option>
+							<option>64</option>
+							<option>128</option>
+							<option>256</option>
+							<option>512</option>
+							<option>1024</option>
+							<option>2048</option>
+						</select>
+					</td>
+					<td align="left">
+						<select name="adc2divclk" OnChange="adc_clk(2)">
+							<option>1</option>
+							<option>2</option>
+							<option>4</option>
+							<option>8</option>
+							<option>16</option>
+							<option>32</option>
+							<option>64</option>
+							<option>128</option>
+							<option>256</option>
+							<option>512</option>
+							<option>1024</option>
+							<option>2048</option>
+						</select>
+					</td>
+				</tr>
+<!--Тактовая частота-->
+				<tr>
+					<td align="left"><font size="2"><u>Тактовая частота АЦП</u></font></td>
+					<td align="left">
+						<input type="text" name="adc1clkHz" value="" size=10 placeholder="ADC_CLK">	Гц
+					</td>
+					<td align="left">
+						<input type="text" name="adc2clkHz" value="" size=10 placeholder="ADC_CLK">	Гц
+					</td>
+				</tr>
+<!--Источник опорного напряжения АЦП-->
+				<tr>
+					<td align="left"><font size="2"><u>Источник опорного напряжения АЦП</u></font></td>
+					<td align="left">
+						<input type="radio" name="mref1" value="intr" OnChange="adc_clk(1)" checked> <font size="2">Внутреннее</font><br>
+						<input type="radio" name="mref1" value="extr" OnChange="adc_clk(1)"> <font size="2">Внешнее</font>
+					</td>
+					<td align="left">
+						<input type="radio" name="mref2" value="intr" OnChange="adc_clk(2)" checked> <font size="2">Внутреннее</font><br>
+						<input type="radio" name="mref2" value="extr" OnChange="adc_clk(2)"> <font size="2">Внешнее</font>
+					</td>
+				</tr>
+<!--Выбор аналогового канала АЦП-->
+				<tr>
+					<td align="left"><font size="2"><u>Номер канала АЦП</u></font></td>
+					<td align="left">
+						<select name='num_ch1' OnChange="adc_clk(1)">
+							<script type='text/javascript'>
+								for (var i = 0; i < 16; i++)
+									document.write('<option>'+i+'</option>');
+							</script>
+						</select>
+					</td>
+					<td align="left">
+						<select name='num_ch2' OnChange="adc_clk(2)">
+							<script type='text/javascript'>
+								for (var i = 0; i < 16; i++)
+									document.write('<option>'+i+'</option>');
+							</script>
+						</select>
+					</td>
+				</tr>
+<!--Способ запуска АЦП-->
+				<tr>
+					<td align="left"><font size="2"><u>Способ запуска АЦП</u></font></td>
+					<td align="left">
+						<input type="radio" name="sample1" value="one" OnChange="adc_clk(1)" checked> <font size="2">Одиночное</font><br>
+						<input type="radio" name="sample1" value="ser" OnChange="adc_clk(1)"> <font size="2">Последовательное</font>
+					</td>
+					<td align="left">
+						<input type="radio" name="sample2" value="one" OnChange="adc_clk(2)" checked> <font size="2">Одиночное</font><br>
+						<input type="radio" name="sample2" value="ser" OnChange="adc_clk(2)"> <font size="2">Последовательное</font>
+					</td>
+				</tr>
+<!--Кнопки-->
+				<tr>
+					<td align="left"><p><font size="2"></font></p></td>
+					<td align="left">
+						<input type="button" name="bl1" value="Рассчитать" onclick="adc_clk(1)">
+					</td>
+					<td>
+						<input type="button" name="bl2" value="Рассчитать" onclick="adc_clk(2)">
+					</td>
+				</tr>
+				
+			</table>
+		</form>
+	</body>
+</html>

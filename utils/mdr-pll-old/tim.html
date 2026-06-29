@@ -1,0 +1,290 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"> 
+		<title>Настройка TIM</title>
+    <style type="text/css">
+      body {
+      	background-color:#fff; /* задаем цвет фона*/
+      	color:#993300; /* задаем цвет текста*/
+      	font-size:12px; /* задаем размер шрифта на странице */
+      	font-style:normal; /* начертание шрифта (нормальное) */
+      	font-family:Arial, Helvetica, sans-serif; /* устанавливаем шрифт */
+      }
+			u {
+				font-weight: bold;
+			}
+			i{
+				color:#4a866f;
+			}
+    </style>
+    <script type="text/javascript">
+			var HCLK;
+			var TIM_CLK_EN = new Array(); var TIM_BRG = new Array(); var TIM_CLK = new Array();
+			var TIM_PSG = new Array(); var TIM_ARR = new Array(); var T_CLK = new Array(); var TIM_U = new Array();
+			var en_tim, timdiv, timHz, timpsg, timer, unit, OutCod;
+			
+			function tim_clk(num){
+				HCLK = document.tim.hclkHz.value;
+				switch (num){
+					case 1: 
+						en_tim = document.tim.en_tim1;
+						timdiv = document.tim.tim1div;
+						timHz = document.tim.tim1Hz;
+						timpsg = document.tim.tim1psg;
+						timer = document.tim.timer1;
+						unit = document.tim.unit1tim;
+					break;
+					case 2: 
+						en_tim = document.tim.en_tim2;
+						timdiv = document.tim.tim2div;
+						timHz = document.tim.tim2Hz;
+						timpsg = document.tim.tim2psg;
+						timer = document.tim.timer2;
+						unit = document.tim.unit2tim;
+					break;
+					case 3: 
+						en_tim = document.tim.en_tim3;
+						timdiv = document.tim.tim3div;
+						timHz = document.tim.tim3Hz;
+						timpsg = document.tim.tim3psg;
+						timer = document.tim.timer3;
+						unit = document.tim.unit3tim;
+					break;
+				}
+				if (en_tim.checked) TIM_CLK_EN[num] = 1;
+				else TIM_CLK_EN[num] = 0;
+				
+				TIM_BRG[num] = timdiv.selectedIndex;
+				switch(TIM_BRG[num]){
+					case 0: TIM_CLK[num] = HCLK/1; break;
+					case 1: TIM_CLK[num] = HCLK/2; break;
+					case 2: TIM_CLK[num] = HCLK/4; break;
+					case 3: TIM_CLK[num] = HCLK/8; break;
+					case 4: TIM_CLK[num] = HCLK/16; break;
+					case 5: TIM_CLK[num] = HCLK/32; break;
+					case 6: TIM_CLK[num] = HCLK/64; break;
+					case 7: TIM_CLK[num] = HCLK/128; break;
+				}
+				
+				
+				if (timpsg.value != ""){
+					if (timpsg.value > 65535){
+						alert("TIM["+num+"]:\n Значение делителя должно быть < 65535!");
+						timpsg.value = "";
+					}
+					TIM_PSG[num] = timpsg.value;
+					T_CLK[num] = TIM_CLK[num]/TIM_PSG[num];
+					
+					timHz.value = T_CLK[num];
+					
+					if (timer.value != ""){
+						TIM_U[num] = timer.value;
+				
+						switch (unit.selectedIndex){
+							case 0: TIM_ARR[num] = T_CLK[num]*TIM_U[num]; break;
+							case 1: TIM_ARR[num] = T_CLK[num]*TIM_U[num]/1000; break;
+							case 2: TIM_ARR[num] = T_CLK[num]*TIM_U[num]/1000000; break;
+							case 3: TIM_ARR[num] = T_CLK[num]/TIM_U[num]; break;
+							case 4: TIM_ARR[num] = T_CLK[num]/TIM_U[num]/1000; break;
+							case 5: TIM_ARR[num] = T_CLK[num]/TIM_U[num]/1000000; break;
+						}
+						TIM_ARR[num] = Math.floor(TIM_ARR[num]);
+						TIM_ARR[num] -= 1;
+						
+						if (TIM_CLK_EN[1] || TIM_CLK_EN[2] || TIM_CLK_EN[3]){
+							OutCod = "<b>void</b> Timer_Init(<b>void</b>){<br>";
+													
+							for (var i = 1; i <= 3; i++){
+								if (TIM_CLK_EN[i]) OutCod += "&nbsp;&nbsp;MDR_RST_CLK->PER_CLOCK |= 1 << "+(13+i)+"; <i>//разрешение тактирования Таймера "+i+"</i><br>";
+							}
+							
+							OutCod += "&nbsp;&nbsp;MDR_RST_CLK->TIM_CLOCK = (<br>";
+							if (TIM_CLK_EN[1]) OutCod += "&nbsp;&nbsp;"+TIM_BRG[1]+" <i>/*делитель тактовой частоты Таймера 1*/</i><br>&nbsp;&nbsp;|("+TIM_CLK_EN[1]+" << 24) <i>/*разешение тактирования Таймера 1*/</i>";
+							if (TIM_CLK_EN[2]) OutCod += "<br>&nbsp;&nbsp;|("+TIM_BRG[2]+" << 8) <i>/*делитель тактовой частоты Таймера 2*/</i><br>&nbsp;&nbsp;|("+TIM_CLK_EN[2]+" << 25) <i>/*разешение тактирования Таймера 2*/</i>";
+							if (TIM_CLK_EN[3]) OutCod += "<br>&nbsp;&nbsp;|("+TIM_BRG[3]+" << 16) <i>/*делитель тактовой частоты Таймера 3*/</i><br>&nbsp;&nbsp;|("+TIM_CLK_EN[3]+" << 26) <i>/*разешение тактирования Таймера 3*/</i><br>";
+							OutCod += "<br>&nbsp;&nbsp;);<br>";
+							
+							
+							for (var i = 1; i <= 3; i++){
+								if (TIM_CLK_EN[i]){
+									OutCod += "<br>&nbsp;&nbsp;MDR_TIMER"+i+"->PSG = 0x"+Number(TIM_PSG[i]-1).toString(16)+";<br>";
+									OutCod += "&nbsp;&nbsp;MDR_TIMER"+i+"->ARR = 0x"+Number(TIM_ARR[i]).toString(16)+";<br>";								
+								}
+							}
+							
+							for (var i = 1; i <= 3; i++){
+								if (TIM_CLK_EN[i]) {
+									OutCod += "<br>&nbsp;&nbsp;MDR_TIMER"+i+"->IE = (1 << 1); <i>//разрешение прерывания по совпадению</i><br>";
+									OutCod += "&nbsp;&nbsp;MDR_TIMER"+i+"->CNTRL = 1;	<i>/*счет вверх по TIM_CLK, таймер вкл.*</i>/<br>";
+									OutCod += "&nbsp;&nbsp;NVIC_EnableIRQ(Timer"+i+"_IRQn);<br>";
+								}
+							}
+							
+							OutCod += "<br>}";
+							
+							if(TIM_CLK_EN[1])
+								OutCod += "<br><i>//Обработчик прерывания</i><br><b>void</b> Timer1_IRQHandler(<b>void</b>){<br><br>&nbsp;&nbsp;<i>//Исполняемый код</i><br><br>&nbsp;&nbsp;MDR_TIMER1->CNT = 0x0000;<br>&nbsp;&nbsp;MDR_TIMER1->STATUS &= ~(1 << 1);<br>&nbsp;&nbsp;NVIC_ClearPendingIRQ(Timer1_IRQn);<br>}";
+							if (TIM_CLK_EN[2])
+								OutCod += "<br><i>//Обработчик прерывания</i><br><b>void</b> Timer2_IRQHandler(<b>void</b>){<br><br>&nbsp;&nbsp;<i>//Исполняемый код</i><br><br>&nbsp;&nbsp;MDR_TIMER2->CNT = 0x0000;<br>&nbsp;&nbsp;MDR_TIMER2->STATUS &= ~(1 << 1);<br>&nbsp;&nbsp;NVIC_ClearPendingIRQ(Timer2_IRQn);<br>}";
+							if (TIM_CLK_EN[3])
+								OutCod += "<br><i>//Обработчик прерывания</i><br><b>void</b> Timer3_IRQHandler(<b>void</b>){<br><br>&nbsp;&nbsp;<i>//Исполняемый код</i><br><br>&nbsp;&nbsp;MDR_TIMER3->CNT = 0x0000;<br>&nbsp;&nbsp;MDR_TIMER3->STATUS &= ~(1 << 1);<br>&nbsp;&nbsp;NVIC_ClearPendingIRQ(Timer3_IRQn);<br>}";
+						}
+						else OutCod = "";
+						parent.postFrame.document.all.cod.innerHTML = OutCod;
+					}
+				}
+				
+			}
+    </script>
+	</head>
+	<body>
+    <span><h2>Настройка Таймеров (режим совпадения)</h2></span><br>
+    	<form name="tim">
+			<table width="95%" border="0" cellpadding="7">
+<!--Выбор TIM-->
+				<tr>
+				<td align="left"><font size="2"><u>Выбор Таймера</u></font></td>
+					<td align="left">
+						<input type="checkbox" name="en_tim1" OnChange="tim_clk(1)"><font size="2">TIM1</font>
+					</td>
+					<td align="left">
+						<input type="checkbox" name="en_tim2" OnChange="tim_clk(2)"><font size="2">TIM2</font>
+					</td>
+					<td align="left">
+						<input type="checkbox" name="en_tim3" OnChange="tim_clk(3)"><font size="2">TIM3</font>
+					</td>
+					<td>
+						<font size="2">HCLK = <input type="text" name="hclkHz" size="9" value="24000000"> Гц</font>
+					</td>
+				</tr>
+<!--Выберите предделитель для TIM1 и TIM2 и TIM3-->
+				<tr>
+					<td align="left"><font size="2"><u>Предделитель</u></font></td>
+					<td align="left">
+						<select name="tim1div" OnChange="tim_clk(1)">
+							<option selected>  1</option>
+							<option>  2</option>
+							<option>  4</option>
+							<option>  8</option>
+							<option> 16</option>
+							<option> 32</option>
+							<option> 64</option>
+							<option>128</option>
+						</select>
+					</td>
+					<td align="left">
+						<select name="tim2div" OnChange="tim_clk(2)">
+							<option selected>  1</option>
+							<option>  2</option>
+							<option>  4</option>
+							<option>  8</option>
+							<option> 16</option>
+							<option> 32</option>
+							<option> 64</option>
+							<option>128</option>
+						</select>
+					</td>
+					<td align="left">
+					<select name="tim3div" OnChange="tim_clk(3)">
+							<option selected>  1</option>
+							<option>  2</option>
+							<option>  4</option>
+							<option>  8</option>
+							<option> 16</option>
+							<option> 32</option>
+							<option> 64</option>
+							<option>128</option>
+						</select>
+					</td>
+				</tr>
+<!--Введите делитель основного счета для TIM1_CLK и TIM2_CLK и TIM3_CLK (значение от 0 до 65535)-->
+				<tr>
+					<td align="left"><font size="2"><u>Делитель основного счета (до 65535)</u></font></td>
+					<td align="left">
+						<input type="text" name="tim1psg" value="1" size=5 OnChange="tim_clk(1)">
+					</td>
+					<td align="left">
+						<input type="text" name="tim2psg" value="1" size=5 OnChange="tim_clk(2)">
+					</td>
+					<td align="left">
+						<input type="text" name="tim3psg" value="1" size=5 OnChange="tim_clk(3)">
+					</td>
+				</tr>
+<!--Вывод TIM_CLK-->
+				<tr>
+					<td align="left"><font size="2"><u>TIM CLK</u></font></td>
+					<td align="left">
+						<input type="text" name="tim1Hz" value="" size=10 placeholder="TIM CLK"><font size="2"> Гц</font>
+					</td>
+					<td align="left">
+						<input type="text" name="tim2Hz" value="" size=10 placeholder="TIM CLK"><font size="2"> Гц</font>
+					</td>
+					<td align="left">
+						<input type="text" name="tim3Hz" value="" size=10 placeholder="TIM CLK"><font size="2"> Гц</font>
+					</td>
+				</tr>
+<!--Введите желаемое время/частоту прерывания таймера-->
+				<tr>
+					<td align="left"><font size="2"><u>Желаемое время/частота</u></font></td>
+					<td align="left">
+						<input type="text" name="timer1" value="1" size=5 OnChange="tim_clk(1)">
+					</td>
+					<td align="left">
+						<input type="text" name="timer2" value="1" size=5 OnChange="tim_clk(2)">
+					</td>
+					<td align="left">
+						<input type="text" name="timer3" value="1" size=5 OnChange="tim_clk(3)">
+					</td>
+				</tr>
+<!--Введите единицы-->
+				<tr>
+					<td align="left"><font size="2"><u>Выберите единицы</u></font></td>
+					<td align="left">
+						<select name="unit1tim" OnChange="tim_clk(1)">
+							<option>сек</option>
+							<option>мсек</option>
+							<option>мксек</option>
+							<option>Гц</option>
+							<option>кГц</option>
+							<option>МГц</option>
+						</select>
+					</td>
+					<td align="left">
+						<select name="unit2tim" OnChange="tim_clk(2)">
+							<option>сек</option>
+							<option>мсек</option>
+							<option>мксек</option>
+							<option>Гц</option>
+							<option>кГц</option>
+							<option>МГц</option>
+						</select>
+					</td>
+					<td align="left">
+						<select name="unit3tim" OnChange="tim_clk(3)">
+							<option>сек</option>
+							<option>мсек</option>
+							<option>мксек</option>
+							<option>Гц</option>
+							<option>кГц</option>
+							<option>МГц</option>
+						</select>
+					</td>
+				</tr>
+<!--Кнопки-->
+				<tr>
+					<td align="left"><p><font size="2"></font></p></td>
+					<td align="left">
+						<input type="button" name="bl1" value="Рассчитать" onclick="tim_clk(1)">
+					</td>
+					<td>
+						<input type="button" name="bl2" value="Рассчитать" onclick="tim_clk(2)">
+					</td>
+					<td>
+						<input type="button" name="bl3" value="Рассчитать" onclick="tim_clk(3)">
+					</td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>

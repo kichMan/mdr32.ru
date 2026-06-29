@@ -1,0 +1,335 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"> 
+		<title>Настройка CPU</title>
+    <style type="text/css">
+      body {
+      	background-color:#fff; /* задаем цвет фона*/
+      	color:#993300; /* задаем цвет текста*/
+      	font-size:12px; /* задаем размер шрифта на странице */
+      	font-style:normal; /* начертание шрифта (нормальное) */
+      	font-family:Arial, Helvetica, sans-serif; /* устанавливаем шрифт */
+      }
+			u {
+				font-weight: bold;
+			}
+    </style>
+    <script type="text/javascript">
+      var extH = new Array();
+					extH[0] = 0;
+					extH[1] = 2000000; extH[2] = 2457000; extH[3] = 4000000; extH[4] = 4194000;
+					extH[5] = 5000000; extH[6] = 6000000; extH[7] = 6144000; extH[8] = 7372800;
+					extH[9] = 8000000; extH[10] = 8192000; extH[11] = 8448000; extH[12] = 9216000;
+					extH[13] = 10000000; extH[14] = 11059200; extH[15] = 12000000; extH[16] = 12288000;
+					extH[17] = 14000000; extH[18] = 14318180; extH[19] = 16000000; 
+      
+      var HSI = 8000000, LSE = 32000, LSI = 40000;
+      var IST, CPU_C1 = 0, CPU_PLL = 0, CPU_C2 = 0, CPU_C3 = 0, HCLK = 0;
+      var CPU_C1_SEL, CPU_C2_SEL, CPU_C3_SEL, HCLK_SEL, HSE_ON = 0;
+			var PLL_CPU_ON, PLL_CPU_MUL, OutCod, DelEeprom, LOW_BKP;
+      
+      var str = new Array();
+      
+      function cpu_clk(){
+        IST = document.cpu.ist.selectedIndex;
+        switch (IST){
+          case 1: document.cpu.cpuc1Hz.value = HSI; 
+                  document.cpu.extq.setAttribute('disabled','disabled');
+                  break;
+          case 2: document.cpu.cpuc1Hz.value = HSI/2; 
+                  document.cpu.extq.setAttribute('disabled','disabled');
+                  break;
+          case 3: document.cpu.extq.removeAttribute('disabled');
+                  document.cpu.cpuc1Hz.value = extH[document.cpu.extq.selectedIndex];
+                  break;
+          case 4: document.cpu.extq.removeAttribute('disabled');
+                  document.cpu.cpuc1Hz.value = extH[document.cpu.extq.selectedIndex]/2;
+                  break;
+        }
+        CPU_C1 = document.cpu.cpuc1Hz.value;
+        
+        var x = document.cpu.pllmul.selectedIndex;
+        CPU_PLL = CPU_C1*x;
+        document.cpu.pllHz.value = CPU_PLL;
+        
+        x = document.cpu.cpuc2mul.selectedIndex;
+        if (x == 1) CPU_C2 = CPU_C1;
+				if (x == 2) CPU_C2 = CPU_PLL;
+				document.cpu.cpuc2Hz.value = CPU_C2;
+        
+        x = document.cpu.cpuc3div.selectedIndex;
+        switch (x){
+					case 0: CPU_C3 = CPU_C2; break;
+					case 1: CPU_C3 = CPU_C2/2; break;
+					case 2: CPU_C3 = CPU_C2/4; break;
+					case 3: CPU_C3 = CPU_C2/8; break;
+					case 4: CPU_C3 = CPU_C2/16; break;
+					case 5: CPU_C3 = CPU_C2/32; break;
+					case 6: CPU_C3 = CPU_C2/64; break;
+					case 7: CPU_C3 = CPU_C2/128; break;
+					case 8: CPU_C3 = CPU_C2/256; break;
+				}
+				document.cpu.cpuc3Hz.value = CPU_C3;
+        
+        x = document.cpu.hclkist.selectedIndex;
+        switch (x){
+					default: HCLK = ''; break;
+					case 1: HCLK = HSI; break;
+					case 2: HCLK = CPU_C3; break;
+					case 3: HCLK = LSE; break;
+					case 4: HCLK = LSI; break;
+				}
+        if (HCLK > 80000000){
+					alert("Превышение допустимой частоты процессора!");
+					document.cpu.hclkHz.select();
+					document.cpu.hclkHz.value = "";
+				}
+        document.cpu.hclkHz.value = HCLK;
+        
+				var CLK_MHz = HCLK/1000000;
+				
+				if (CLK_MHz < 25) DelEeprom = 0;
+				else if (CLK_MHz < 50) DelEeprom = 1;
+				else if (CLK_MHz < 75) DelEeprom = 2;
+				else if (CLK_MHz < 100) DelEeprom = 3;
+				else if (CLK_MHz < 125) DelEeprom = 4;
+				else if (CLK_MHz < 150) DelEeprom = 5;
+				else if (CLK_MHz < 175) DelEeprom = 6;
+				else if (CLK_MHz < 200) DelEeprom = 7;
+				
+				if (CLK_MHz < 0.2) LOW_BKP = 1;
+				else if (CLK_MHz < 0.5) LOW_BKP = 2;
+				else if (CLK_MHz < 1) LOW_BKP = 3;
+				else if (CLK_MHz < 10) LOW_BKP = 0;
+				else if (CLK_MHz < 40) LOW_BKP = 5;
+				else if (CLK_MHz < 80) LOW_BKP = 6;
+				else if (CLK_MHz >= 80) LOW_BKP = 7;
+				else LOW_BKP = 4;
+				
+				if (document.cpu.extq.selectedIndex != 0) HSE_ON = 1;
+        CPU_C1_SEL = document.cpu.ist.selectedIndex - 1;
+        CPU_C2_SEL = document.cpu.cpuc2mul.selectedIndex - 1;
+        CPU_C3_SEL = document.cpu.cpuc3div.selectedIndex;
+        if (CPU_C3_SEL != 0) CPU_C3_SEL += 7;
+        HCLK_SEL = document.cpu.hclkist.selectedIndex - 1;
+        
+        PLL_CPU_ON = document.cpu.pllmul.selectedIndex;
+        if (PLL_CPU_ON != 0) {
+          PLL_CPU_ON = 1;
+          PLL_CPU_MUL = document.cpu.pllmul.selectedIndex - 1;
+         }
+        
+        OutCod = '<b>void</b> CPU_init (<b>void</b>){<br>';
+        
+        
+        if ((CPU_C1_SEL == 2) || (CPU_C1_SEL == 3)){
+				
+					OutCod += '&nbsp;&nbsp;<i>//Необходимая пауза для работы Flash-памяти программ</i><br>';
+					OutCod += '&nbsp;&nbsp;MDR_EEPROM->CMD |= ('+DelEeprom +' << 3);';
+					if (CLK_MHz > 80) 
+						OutCod += ' <i>//Работа микросхемы не гарантируется</i>';
+					OutCod += '<br><br>';
+					
+          OutCod += '&nbsp;&nbsp;MDR_RST_CLK->HS_CONTROL = 0x01; <i>// вкл. HSE осцилятора </i><br>';
+          OutCod += '&nbsp;&nbsp;<b>while</b> ((MDR_RST_CLK->CLOCK_STATUS & (1 << 2)) == 0x00); <i>// ждем пока HSE выйдет в рабочий режим </i><br>';
+        }
+        if (PLL_CPU_MUL){
+          OutCod += '<br>&nbsp;&nbsp;MDR_RST_CLK->PLL_CONTROL = (('+PLL_CPU_ON+' << 2) | ('+PLL_CPU_MUL+' << 8));	<i>//вкл. PLL  | коэф. умножения = '+(PLL_CPU_MUL+1)+'</i><br>';
+          OutCod += '&nbsp;&nbsp;<b>while</b>((MDR_RST_CLK->CLOCK_STATUS & 0x02) != 0x02); <i>//ждем когда PLL выйдет в раб. режим</i><br>';
+        }
+        
+        OutCod += '<br>&nbsp;&nbsp;MDR_RST_CLK->CPU_CLOCK = ('+CPU_C1_SEL+' <i>//источник для CPU_C1</i><br>&nbsp;&nbsp;| ('+CPU_C2_SEL+' << 2) <i>//источник для CPU_C2</i><br>&nbsp;&nbsp;| ('+CPU_C3_SEL+' << 4) <i>//предделитель для CPU_C3</i><br>&nbsp;&nbsp;| ('+HCLK_SEL+' << 8));<i>//источник для HCLK</i>';
+        
+				
+				OutCod += '<br>&nbsp;&nbsp;MDR_BKP->REG_0E |= ('+LOW_BKP +' << 0); <i>//режим встроенного регулятора напряжения DUcc(в зависимости от частоты МК)</i><br>';
+				OutCod += '&nbsp;&nbsp;MDR_BKP->REG_0E |= ('+LOW_BKP +' << 3); <i>//выбор доп.стабилизирующей нагрузки</i><br>';
+				
+        OutCod += '<br>}';
+        
+        if (document.cpu.ist.selectedIndex == 0) OutCod = '';
+        
+				parent.postFrame.document.all.cod.innerHTML = OutCod;
+      }
+    </script>
+	</head>
+	<body>
+    <span><h2>Расчет частоты тактирования CPU</h2></span><br>
+    <form name="cpu">
+			<table width="60%" border="0" cellpadding="7">
+<!--Выбор источник синхросигнала-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>Источник синхросигнала</u></font>
+					</td>
+					<td align="left">
+						<select name="ist" OnChange="cpu_clk()">
+		    			<option selected></option>
+		    			<option>HSI</option>
+		    			<option>HSI/2</option>
+		    			<option>HSE</option>
+		    			<option>HSE/2</option>
+		  			</select>
+					</td>
+				</tr>
+<!--Выбор частоты внешенго кварца-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>Чатота внешнего кварца</u></font>
+					</td>
+					<td align="left">
+						<select name="extq" OnChange="cpu_clk()" disabled>
+		    			<option></option>
+		    			<option> 2 000 000</option>
+		    			<option> 2 457 000</option>
+		    			<option> 4 000 000</option>
+		    			<option> 4 194 000</option>
+		    			<option> 5 000 000</option>
+		    			<option> 6 000 000</option>
+		    			<option> 6 144 000</option>
+		    			<option> 7 372 800</option>
+		    			<option selected> 8 000 000</option>
+		    			<option> 8 192 000</option>
+		    			<option> 8 448 000</option>
+		    			<option> 9 216 000</option>
+		    			<option>10 000 000</option>
+		    			<option>11 059 200</option>
+		    			<option>12 000 000</option>
+		    			<option>12 288 000</option>
+		    			<option>14 000 000</option>
+		    			<option>14 318 180</option>
+		    			<option>16 000 000</option>
+		    		</select>
+		    		Гц
+					</td>
+				</tr>
+<!--Вывод частоты CPU C1-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>CPU C1 = </u></font>
+					</td>
+					<td align="left">
+		  			<input type="text" name="cpuc1Hz" value="" size=10 placeholder="CPU C1"> Гц
+					</td>
+				</tr>
+<!--Выбор множителя PLL-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>Множитель PLL </u></font>
+					</td>
+					<td align="left">
+		        <select name="pllmul" OnChange="cpu_clk()">
+		  				<option> 0</option>
+		  				<option> 1</option>
+		  				<option> 2</option>
+		  				<option> 3</option>
+		  				<option> 4</option>
+		  				<option> 5</option>
+		  				<option> 6</option>
+		  				<option> 7</option>
+		  				<option> 8</option>
+		  				<option> 9</option>
+		  				<option>10</option>
+		  				<option>11</option>
+		  				<option>12</option>
+		  				<option>13</option>
+		  				<option>14</option>
+		  				<option>15</option>
+		  				<option>16</option>
+		  			</select>
+					</td>
+				</tr>
+<!--Вывод частоты CPU_PLL-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>CPU PLL = </u></font>
+					</td>
+					<td align="left">
+		  			<input type="text" name="pllHz" value="" size=10 placeholder="CPU PLL"> Гц
+					</td>
+				</tr>
+<!--Выбор источника для CPU_C2-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>Источник для CPU_C2</u></font>
+					</td>
+					<td align="left">
+		  			<select name="cpuc2mul" OnChange="cpu_clk()">
+							<option></option>
+							<option selected>CPU_C1</option>
+							<option>CPU_PLL</option>
+						</select>
+					</td>
+				</tr>
+<!--Вывод частоты CPU_C2-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>CPU C2 = </u></font>
+					</td>
+					<td align="left">
+		  			<input type="text" name="cpuc2Hz" value="" size=10 placeholder="CPU C2"> Гц
+					</td>
+				</tr>
+<!--Выбор предделителя CPU_C3-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>Предделитель для CPU_C3</u></font>
+					</td>
+					<td align="left">
+						<select name="cpuc3div" OnChange="cpu_clk()">
+							<option>1</option>
+							<option>2</option>
+							<option>4</option>
+							<option>8</option>
+							<option>16</option>
+							<option>32</option>
+							<option>64</option>
+							<option>128</option>
+							<option>256</option>
+						</select>
+					</td>
+				</tr>	
+<!--Вывод частоты CPU_C3-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>CPU C3 = </u></font>
+					</td>
+					<td align="left">
+		  			<input type="text" name="cpuc3Hz" value="" size=10 placeholder="CPU C3"> Гц
+					</td>
+				</tr>
+<!--Выбор источника HCLK-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>Источник для HCLK</u></font>
+					</td>
+					<td align="left">
+						<select name="hclkist" OnChange="cpu_clk()">
+							<option> </option>
+							<option>HSI</option>
+							<option selected>CPU_C3</option>
+							<option>LSE</option>
+							<option>LSI</option>
+						</select>
+					</td>
+				</tr>
+<!--Вывод частоты HCLK-->
+				<tr>
+					<td align="left">
+						<font size="2"><u>HCLK = </u></font>
+					</td>
+					<td align="left">
+		  			<input type="text" name="hclkHz" value="" size=10 placeholder="HCLK"> Гц
+					</td>
+				</tr>
+<!--Кнопки-->
+				<tr>
+					<td align="left"><p><font size="2"></font></p></td>
+					<td align="left">
+						<input type="button" name="bl1" value="Рассчитать" onclick="cpu_clk()">
+					</td>
+				</tr>
+			</table>
+    </form>
+	</body>
+</html>
